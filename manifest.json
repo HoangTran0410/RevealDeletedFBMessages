@@ -1,0 +1,26 @@
+{
+  "name": "Reveal Deleted FB Messages",
+  "description": "Xem lại tin nhắn đã gỡ trên fb",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "browser_action": {
+    "default_title": "Reveal Deleted FB Message"
+  },
+  "permissions": [
+    "storage",
+    "*://*.facebook.com/*",
+    "*://*.messenger.com/*"
+  ],
+  "content_scripts": [
+    {
+      "js": ["./inject.js"],
+      "matches": [
+        "*://*.facebook.com/*",
+        "*://*.messenger.com/t/*"
+      ],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  "web_accessible_resources": ["inject_websocket.js"]
+}
