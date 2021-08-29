@@ -35,7 +35,7 @@
       // socket ký tự 3 liên quan tới tin nhắn từ người khác gửi/xóa tới mình
       // socket ký tự 1 được dùng bởi event xóa tin nhắn trong nhóm chat (và nhiều event khác ngoài tin nhắn ???)
       if (utf8_str[0] === "3" || utf8_str[0] === "1") {
-        const msg_id_regex = /(?=mid\.\$)(.*?)(?=\\",)/;
+        const msg_id_regex = /(?=mid\.\$)(.*?)(?=\\")/;
         const msg_id = utf8_str.match(msg_id_regex);
 
         if (msg_id?.length) {
