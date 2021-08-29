@@ -10,4 +10,4 @@ Một extension nho nhỏ, giúp mọi người xem lại những tin nhắn đ�
 
 - Hiện chưa up lên store (mất 5$ á :)) ) Khi nào hoàn thiện hơn, nếu có tiền sẽ up lên cho mọi người dễ xài :)
 
-## Ý tưởng và Tham khảo code từ [KB2A Tool](kb2atool.com)
+## Ý tưởng và Tham khảo code từ [KB2A Tool](www.kb2atool.com)
