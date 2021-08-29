@@ -43,7 +43,7 @@
           console.log(`\n\nLúc ${new Date().toLocaleString()}: ${id}`);
 
           // =============================== SIGNAL THU HỒI TIN NHẮN ===============================
-          // Nếu có id tin nhắn đã có trong all_msg
+          // Nếu id của tin nhắn này đã có trong all_msg
           // => (Rất Có thể) là event Thu hồi
 
           if (all_msgs[id] != null) {
@@ -74,7 +74,7 @@
             const msg = parse(text_content[0]);
             console.log(msg);
 
-            // Thêm vào mảng
+            // Lưu lại
             all_msgs[id] = {
               type: "text",
               content: msg,
@@ -100,7 +100,7 @@
 
             urls.forEach((url) => console.log(url));
 
-            // Thêm vào mảng
+            // Lưu lại
             all_msgs[id] = {
               type: "image",
               content: urls.join(","),
@@ -110,6 +110,8 @@
           }
 
           // =========== Lấy ra tất cả chuỗi ===========
+          // Trường hợp lấy được id tin nhắn, mà ko lấy được chữ hay hình, thì show ra hết chuỗi => dùng để debug
+          // Do socket có mã 1 ở đầu được dùng bởi nhiều event khác ngoài nhắn tin, mấy event đó sẽ vô đây !??
           const all_strings_regex = /(\\\")(.*?)(\\\")/g;
           let all_strings = utf8_str.match(all_strings_regex) || [];
           all_strings = all_strings.map((str) => parse(str));
@@ -125,3 +127,5 @@
   window.WebSocket.prototype = original_WebSocket.prototype;
   window.WebSocket.prototype.constructor = window.WebSocket;
 })();
+
+// TODO: Cần xem lại socket event, xác định được chính xác điểm khác biệt của các event thì mới tạo regex đúng được
