@@ -4,6 +4,8 @@ Một extension nho nhỏ, giúp mọi người xem lại những tin nhắn đ�
 
 - Hỗ trợ 2 trang web [facebook.com](https://www.facebook.com) và [messenger.com](https://www.facebook.com)
 
+- Hỗ trợ xem cả link *Hình Ảnh* đã gỡ
+
 - Hiện tại chỉ hiển thị tin nhắn bị xóa trong **console** của trình duyệt
 
 - Extension đang trong giai đoạn phát triển, còn nhiều lỗi vặt
