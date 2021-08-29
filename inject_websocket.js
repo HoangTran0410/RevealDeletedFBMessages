@@ -11,7 +11,8 @@
     let limit = 10;
     while (--limit > 0) {
       try {
-        ret = JSON.parse(`"${ret}"`);
+        if (ret[0] === '"') ret = JSON.parse(ret);
+        else ret = JSON.parse(`"${ret}"`);
       } catch (e) {
         break;
       }
@@ -84,8 +85,8 @@
           }
 
           // =============================== TIN NHẮN HÌNH ẢNH ===============================
-          // Hình ảnh là đoạn bắt đầu bằng https:, kết thúc bằng ",
-          const img_chat_regex = /(https)(.*?)(?=\\",)/g;
+          // Hình ảnh là đoạn bắt đầu bằng "https VÀ kết thúc bằng "
+          const img_chat_regex = /(https)(.*?)(?=\\")/g;
           const img_content = utf8_str.match(img_chat_regex);
 
           if (img_content?.length) {
@@ -93,10 +94,13 @@
             let urls = img_content.map((str) => parse(str));
 
             // Lọc ra những link kích thước nhỏ (có "/s x" hoặc "/p x" trong link)
-            const small_img_url_regex = /(s\d+x\d+)|(p\d+x\d+)/g;
-            urls = urls.filter(
-              (url) => !url.match(small_img_url_regex)?.length
-            );
+            // Chỉ lọc khi có nhiều hơn 1 hình
+            if (urls.length > 1) {
+              const small_img_url_regex = /(s\d+x\d+)|(p\d+x\d+)/g;
+              urls = urls.filter(
+                (url) => !url.match(small_img_url_regex)?.length
+              );
+            }
 
             urls.forEach((url) => console.log(url));
 
