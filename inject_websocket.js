@@ -155,7 +155,6 @@
           // Do socket có mã 1 ở đầu được dùng bởi nhiều event khác ngoài nhắn tin, mấy event đó sẽ vô đây !??
           const all_strings_regex = /(\\\")(.*?)(\\\")/g;
           let all_strings = utf8_str.match(all_strings_regex) || [];
-          all_strings.unshift(requestid); // chèn request-id vào vị trí đầu tiên trong mảng 
           all_strings = all_strings.map((str) => parse(str));
           console.log("> Mọi thông tin: ", all_strings);
         }
