@@ -1,9 +1,7 @@
 (function () {
   console.log("hello from You Can't Hide Your Message");
 
-  // Lưu tất cả tin nhắn, và những tin nhắn bị gỡ
-  const all_msgs = {};
-  const deleted_msgs = {};
+  // ============================ Những hàm hỗ trợ ============================
 
   // Hàm decode data websocket về tiếng việt, loại bỏ những thằng \\
   const parse = (str) => {
@@ -19,6 +17,37 @@
     }
     return ret;
   };
+
+  // Hàm xuất ra console, xuất chữ và hình - https://stackoverflow.com/a/26286167
+  const log = {
+    text: (str, color = "white", bg = "black") => {
+      console.log(`%c${str}`, `color: ${color}; background: ${bg}`);
+    },
+    image: (url) => {
+      var img = new Image();
+      img.onload = function () {
+        const ratio = this.width / this.height;
+        const h = this.height > 150 ? 300 : 150,
+          w = ratio * h;
+        var style = [
+          "font-size: 1px;",
+          `line-height: ${h % 2}px;`,
+          `padding: ${h * 0.5}px ${w * 0.5}px;`,
+          `background-size: ${w}px ${h}px;`,
+          `background-image: url("${url}")`,
+        ].join(" ");
+        console.log(url);
+        console.log("%c ", style);
+      };
+      img.src = url;
+    },
+  };
+
+  // ========================================= BẮT ĐẦU HACK :)) =========================================
+
+  // Lưu tất cả tin nhắn, và những tin nhắn bị gỡ
+  const all_msgs = {};
+  const deleted_msgs = {};
 
   // Lưu lại webSocket gốc của browser
   const original_WebSocket = window.WebSocket;
@@ -51,16 +80,16 @@
             deleted_msgs[id] = all_msgs[id];
             delete all_msgs[id];
 
-            console.log("Tin nhắn đã bị thu hồi: ");
+            log.text("Tin nhắn đã bị thu hồi: ", "red");
 
             if (deleted_msgs[id].type === "text") {
-              console.log(deleted_msgs[id].content);
+              log.text(deleted_msgs[id].content);
             }
 
             if (deleted_msgs[id].type === "image") {
               deleted_msgs[id].content
                 .split(",")
-                .forEach((url) => console.log(url));
+                .forEach((url) => log.image(url));
             }
 
             return;
@@ -73,7 +102,7 @@
 
           if (text_content?.length) {
             const msg = parse(text_content[0]);
-            console.log(msg);
+            log.text(msg);
 
             // Lưu lại
             all_msgs[id] = {
@@ -93,21 +122,24 @@
             // decode từng thằng
             let urls = img_content.map((str) => parse(str));
 
+            // Lọc ra những link trùng nhau - https://www.javascripttutorial.net/array/javascript-remove-duplicates-from-array/
+            let unique_urls = [...new Set(urls)];
+
             // Lọc ra những link kích thước nhỏ (có "/s x" hoặc "/p x" trong link)
             // Chỉ lọc khi có nhiều hơn 1 hình
-            if (urls.length > 1) {
+            if (unique_urls.length > 1) {
               const small_img_url_regex = /(s\d+x\d+)|(p\d+x\d+)/g;
-              urls = urls.filter(
+              unique_urls = unique_urls.filter(
                 (url) => !url.match(small_img_url_regex)?.length
               );
             }
 
-            urls.forEach((url) => console.log(url));
+            unique_urls.forEach((url) => log.image(url));
 
             // Lưu lại
             all_msgs[id] = {
               type: "image",
-              content: urls.join(","),
+              content: unique_urls.join(","),
             };
 
             return;
@@ -133,3 +165,4 @@
 })();
 
 // TODO: Cần xem lại socket event, xác định được chính xác điểm khác biệt của các event thì mới tạo regex đúng được
+// event có ký tự 1: Thả react vào tin nhắn / Thu hồi tin nhắn trong nhóm chat
