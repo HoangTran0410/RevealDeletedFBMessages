@@ -1,7 +1,7 @@
 (function () {
   console.log("hello from You Can't Hide Your Message");
 
-  // ============================ Những hàm hỗ trợ ============================
+  //#region ============================ Những hàm hỗ trợ ============================
 
   // Hàm decode data websocket về tiếng việt, loại bỏ những thằng \\
   const parse = (str) => {
@@ -42,8 +42,9 @@
       img.src = url;
     },
   };
+  // #endregion
 
-  // ========================================= BẮT ĐẦU HACK :)) =========================================
+  //#region ========================================= BẮT ĐẦU HACK :)) =========================================
 
   // Lưu tất cả tin nhắn, và những tin nhắn bị gỡ
   const all_msgs = {};
@@ -77,7 +78,7 @@
           const requestid = request_id[0]
           console.log(`\n\nLúc ${new Date().toLocaleString()}: request_id=${requestid} id=${msgid}`);
 
-          // =============================== SIGNAL THU HỒI TIN NHẮN ===============================
+          //#region =============================== SIGNAL THU HỒI TIN NHẮN ===============================
           // Nếu id của tin nhắn này đã có trong all_msg
           // => (Rất Có thể) là event Thu hồi
 
@@ -99,8 +100,9 @@
 
             return;
           }
+          //#endregion
 
-          // =============================== TIN NHẮN CHỮ ===============================
+          //#region =============================== TIN NHẮN CHỮ ===============================
           // Tin nhắn chữ sẽ nằm giữa đoạn \"124\\", \\" TỚI \\",
           const text_chat_regex = /(?<=\\"124\\", \\")(.*?)(?=\\",)/;
           const text_content = utf8_str.match(text_chat_regex);
@@ -117,8 +119,9 @@
 
             return;
           }
+          //#endregion
 
-          // =============================== TIN NHẮN HÌNH ẢNH ===============================
+          //#region =============================== TIN NHẮN HÌNH ẢNH ===============================
           // Hình ảnh là đoạn bắt đầu bằng "https VÀ kết thúc bằng "
           const img_chat_regex = /(https)(.*?)(?=\\")/g;
           const img_content = utf8_str.match(img_chat_regex);
@@ -149,14 +152,16 @@
 
             return;
           }
+          //#endregion
 
-          // =========== Lấy ra tất cả chuỗi ===========
+          //#region =========== Lấy ra tất cả chuỗi ===========
           // Trường hợp lấy được id tin nhắn, mà ko lấy được chữ hay hình, thì show ra hết chuỗi => dùng để debug
           // Do socket có mã 1 ở đầu được dùng bởi nhiều event khác ngoài nhắn tin, mấy event đó sẽ vô đây !??
           const all_strings_regex = /(\\\")(.*?)(\\\")/g;
           let all_strings = utf8_str.match(all_strings_regex) || [];
           all_strings = all_strings.map((str) => parse(str));
           console.log("> Mọi thông tin: ", all_strings);
+          //#endregion
         }
       }
     });
@@ -167,7 +172,8 @@
   // Giữ nguyên prototype chỉ đổi constructor thành fake constructor
   window.WebSocket.prototype = original_WebSocket.prototype;
   window.WebSocket.prototype.constructor = window.WebSocket;
+  // #endregion
 })();
 
 // TODO: Cần xem lại socket event, xác định được chính xác điểm khác biệt của các event thì mới tạo regex đúng được
-// event có ký tự 1: Thả react vào tin nhắn / Thu hồi tin nhắn trong nhóm chat
+// event có ký tự 1: Thả react vào tin nhắn / Thu hồi tin nhắn trong nhóm chat / load tin nhắn cũ
