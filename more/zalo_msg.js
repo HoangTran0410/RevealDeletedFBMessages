@@ -1,0 +1,1 @@
+document.querySelectorAll("[id*=mtc]")[1].textContent

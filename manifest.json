@@ -4,19 +4,34 @@
   "version": "0.0.1",
   "manifest_version": 2,
   "browser_action": {
-    "default_title": "Reveal Deleted FB Message"
+    "default_title": "Reveal Deleted FB Message",
+    "default_popup": "popup/popup.html"
+  },
+  "externally_connectable": {
+    "matches": [
+      "*://*.facebook.com/*",
+      "*://*.messenger.com/*",
+      "*://*.instagram.com/*"
+    ]
   },
   "permissions": [
     "storage",
+    "background",
     "*://*.facebook.com/*",
-    "*://*.messenger.com/*"
+    "*://*.messenger.com/*",
+    "*://*.instagram.com/*"
   ],
+  "background": {
+    "persistent": true,
+    "scripts": ["background.js"]
+  },
   "content_scripts": [
     {
       "js": ["./inject.js"],
       "matches": [
         "*://*.facebook.com/*",
-        "*://*.messenger.com/t/*"
+        "*://*.messenger.com/t/*",
+        "*://*.instagram.com/*"
       ],
       "run_at": "document_start",
       "all_frames": true

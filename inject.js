@@ -1,3 +1,20 @@
+// https://stackoverflow.com/a/34414568
+var script = document.createElement("script");
+script.textContent =
+  "const rvdfmExtensionId = " + JSON.stringify(chrome.runtime.id);
+(document.head || document.documentElement).appendChild(script);
+script.parentNode.removeChild(script);
+
+// https://stackoverflow.com/a/25847017
+window.addEventListener(
+  "rvdfmPassToBackground",
+  function (evt) {
+    chrome.runtime.sendMessage(evt.detail);
+  },
+  false
+);
+
+// =========== inject websocket code ==========
 var s = document.createElement("script");
 s.src = chrome.extension.getURL("./inject_websocket.js");
 
