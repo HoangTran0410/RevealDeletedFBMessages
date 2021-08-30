@@ -68,26 +68,31 @@
         const msg_id_regex = /(?=mid\.\$)(.*?)(?=\\")/;
         const msg_id = utf8_str.match(msg_id_regex);
 
-        if (msg_id?.length) {
-          const id = msg_id[0];
-          console.log(`\n\nLúc ${new Date().toLocaleString()}: ${id}`);
+        const request_id_regex = /(?<=\"request_id\":)(.*)(?=,\")/g;
+        const request_id = utf8_str.match(request_id_regex);
+
+        // (Hình như) những event tin nhắn đều có msg_id khác null VÀ giá trị request_id là null
+        if (msg_id?.length && request_id?.length && request_id[0] == "null") {
+          const msgid = msg_id[0];
+          const requestid = request_id[0]
+          console.log(`\n\nLúc ${new Date().toLocaleString()}: request_id=${requestid} id=${msgid}`);
 
           // =============================== SIGNAL THU HỒI TIN NHẮN ===============================
           // Nếu id của tin nhắn này đã có trong all_msg
           // => (Rất Có thể) là event Thu hồi
 
-          if (all_msgs[id] != null) {
-            deleted_msgs[id] = all_msgs[id];
-            delete all_msgs[id];
+          if (all_msgs[msgid] != null && deleted_msgs[msgid] != null) {
+            deleted_msgs[msgid] = all_msgs[msgid];
+            delete all_msgs[msgid];
 
             log.text("Tin nhắn đã bị thu hồi: ", "red");
 
-            if (deleted_msgs[id].type === "text") {
-              log.text(deleted_msgs[id].content);
+            if (deleted_msgs[msgid].type === "text") {
+              log.text(deleted_msgs[msgid].content);
             }
 
-            if (deleted_msgs[id].type === "image") {
-              deleted_msgs[id].content
+            if (deleted_msgs[msgid].type === "image") {
+              deleted_msgs[msgid].content
                 .split(",")
                 .forEach((url) => log.image(url));
             }
@@ -96,8 +101,8 @@
           }
 
           // =============================== TIN NHẮN CHỮ ===============================
-          // Tin nhắn chữ sẽ nằm giữa đoạn \"124\\", \\" TỚI \\",undefined
-          const text_chat_regex = /(?<=\\"124\\", \\")(.*?)(?=\\",undefined)/;
+          // Tin nhắn chữ sẽ nằm giữa đoạn \"124\\", \\" TỚI \\",
+          const text_chat_regex = /(?<=\\"124\\", \\")(.*?)(?=\\",)/;
           const text_content = utf8_str.match(text_chat_regex);
 
           if (text_content?.length) {
@@ -105,7 +110,7 @@
             log.text(msg);
 
             // Lưu lại
-            all_msgs[id] = {
+            all_msgs[msgid] = {
               type: "text",
               content: msg,
             };
@@ -137,7 +142,7 @@
             unique_urls.forEach((url) => log.image(url));
 
             // Lưu lại
-            all_msgs[id] = {
+            all_msgs[msgid] = {
               type: "image",
               content: unique_urls.join(","),
             };
@@ -150,6 +155,7 @@
           // Do socket có mã 1 ở đầu được dùng bởi nhiều event khác ngoài nhắn tin, mấy event đó sẽ vô đây !??
           const all_strings_regex = /(\\\")(.*?)(\\\")/g;
           let all_strings = utf8_str.match(all_strings_regex) || [];
+          all_strings.unshift(requestid); // chèn request-id vào vị trí đầu tiên trong mảng 
           all_strings = all_strings.map((str) => parse(str));
           console.log("> Mọi thông tin: ", all_strings);
         }
