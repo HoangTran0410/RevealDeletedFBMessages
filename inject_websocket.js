@@ -14,7 +14,9 @@ const rvdfm_clear = () => {
   console.log("Extension RVDFM - Xem Tin Nhắn Bị Gỡ Trên FB đã BẬT");
 
   rvdfm_all_msgs = JSON.parse(localStorage.rvdfm_all_msgs || "[]");
-  console.log(`RVDFM Đã tải lên ${rvdfm_all_msgs.length} tin nhắn từ LocalStorage.`);
+  console.log(
+    `RVDFM Đã tải lên ${rvdfm_all_msgs.length} tin nhắn từ LocalStorage.`
+  );
 
   // Lưu lại vào localStorage mỗi khi tắt tab
   window.addEventListener("beforeunload", () => {
@@ -128,7 +130,7 @@ const rvdfm_clear = () => {
             }
           }
 
-          // Tin nhắn image / gif / video
+          // Tin nhắn đính kèm: image / gif / video / âm thanh / file
           if (str_i === "591" && isLink(all_strings[i + 2])) {
             const isImg = all_strings[i + 1]?.startsWith("image-");
             const isGif = all_strings[i + 1]?.startsWith("gif-");
@@ -143,7 +145,7 @@ const rvdfm_clear = () => {
               ? "video"
               : isAudio
               ? "âm thanh"
-              : "media ?";
+              : "đính kèm";
 
             for (let j = i; j < all_strings.length - 1; j++) {
               if (isMsgIdStr(all_strings[j])) {
@@ -180,6 +182,7 @@ const rvdfm_clear = () => {
             const id = all_strings[i + 1];
             const content =
               rvdfm_all_msgs.find((c) => c.id === id)?.content || "";
+
             chat.push({
               type: "Gỡ react",
               id: id,

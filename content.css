@@ -1,10 +1,11 @@
 .rvdfm-notification {
     display: flex;
     background-color: white;
-    border: rgb(242, 105, 77) 1px solid;
+    border: rgb(77, 242, 99) 1px solid;
     border-radius: 5px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: medium;
+    color: black;
     width: 450px;
     padding: 8px;
     position: fixed;
