@@ -3,20 +3,28 @@ localStorage.clear();
 chrome.runtime.onMessage.addListener(function (data, sender, sendResponse) {
   console.log(data);
 
-  switch (data.type) {
-    case "deleted_msg": {
-      try {
-        const old_data = JSON.parse(localStorage.rvdfm || "[]");
-        localStorage.rvdfm = JSON.stringify([...old_data, data]);
+  try {
+    switch (data.type) {
+      case "deleted_unknow_msg":
+      case "deleted_msg": {
+        const rvdfm = JSON.parse(localStorage.rvdfm || "[]");
+        localStorage.rvdfm = JSON.stringify([...rvdfm, data]);
 
         console.log(localStorage);
-      } catch (e) {
-        console.error(e);
+        break;
+      }
+      case "new_msg_text":
+      case "new_msg_media": {
+        const msgs = JSON.parse(localStorage.rvdfmmsgs || "[]");
+        localStorage.rvdfmmsgs = JSON.stringify([...msgs, data]);
+        break;
+      }
+      default: {
+        console.log("Nhận được event không xác định: ", data);
+        break;
       }
     }
-    case "new_msg_text": {
-    }
-    case "new_msg_img": {
-    }
+  } catch (e) {
+    console.error(e);
   }
 });

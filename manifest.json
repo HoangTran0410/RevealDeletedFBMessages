@@ -5,7 +5,13 @@
   "manifest_version": 2,
   "browser_action": {
     "default_title": "Reveal Deleted FB Message",
-    "default_popup": "popup/popup.html"
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "24": "icons/icon24.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png"
+    }
   },
   "externally_connectable": {
     "matches": [
@@ -16,10 +22,10 @@
   },
   "permissions": [
     "storage",
+    "unlimitedStorage",
     "background",
     "*://*.facebook.com/*",
-    "*://*.messenger.com/*",
-    "*://*.instagram.com/*"
+    "*://*.messenger.com/*"
   ],
   "background": {
     "persistent": true,
@@ -27,15 +33,12 @@
   },
   "content_scripts": [
     {
-      "js": ["./inject.js"],
-      "matches": [
-        "*://*.facebook.com/*",
-        "*://*.messenger.com/t/*",
-        "*://*.instagram.com/*"
-      ],
+      "js": ["./content.js"],
+      "css": ["./content.css"],
+      "matches": ["*://*.facebook.com/*", "*://*.messenger.com/*"],
       "run_at": "document_start",
       "all_frames": true
     }
   ],
-  "web_accessible_resources": ["inject_websocket.js"]
+  "web_accessible_resources": ["inject_websocket.js", "icons/icon32.png"]
 }

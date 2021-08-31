@@ -1,37 +1,41 @@
-// chrome.storage.sync.get(["rvdfm"], function (result) {
-//   console.log("Value currently is " + result.key);
-// });
+$(document).ready(function () {
+  var dataSet = [
+    ["1", "14:17 30/08/2021", "14:17 30/08/2021", "Hoang", "Hello"],
+  ];
 
-window.onload = () => {
-  const list_div = document.querySelector("#list");
-  const btn_refresh = document.querySelector("#btn_refresh");
-
-  const refreshData = () => {
-    const data = JSON.parse(localStorage.rvdfm || "[]");
-    list_div.innerHTML =
-      data
-        .map((chat) => {
-          const time = new Date(chat.time).toLocaleString();
-
-          if (chat.msg_data.type === "new_msg_text")
-            return `<li>${time}: <b>${chat.msg_data.content}</b></li>`;
-
-          if (chat.msg_data.type == "new_msg_img")
-            return chat.msg_data.content.split(",").map(
-              (url) => `<li> ${time}: 
-                            <img src="${url}" style="max-width: 120px; max-height: 120px;" />
-                            <a href="${url}">Link ảnh</a> 
-                        </li>`
-            );
-        })
-        .join("") || "<h1 style='color: red;'>Chưa có gì cả</h1>";
-  };
-
-  btn_refresh.addEventListener("click", refreshData);
-
-  setInterval(() => {
-    refreshData();
-  }, 5000);
-
-  refreshData();
-};
+  $("#example").DataTable({
+    dom: 'B<"clear">lfrtip',
+    data: dataSet,
+    columns: [
+      { title: "#" },
+      { title: "Xóa lúc" },
+      { title: "Gửi lúc" },
+      { title: "Người gửi" },
+      { title: "Nội dung" },
+    ],
+    columnDefs: [
+      {
+        targets: 2,
+        render: function (data) {
+          console.log(data);
+          return '<img src="' + data + '">';
+        },
+      },
+    ],
+    language: {
+      search: "Tìm kiếm",
+      searchPlaceholder: "",
+      lengthMenu: "Hiển thị _MENU_ dòng / trang",
+      zeroRecords: "Không tìm thấy",
+      info: "Trang _PAGE_ / _PAGES_",
+      infoEmpty: "Từ lúc cài extension này chưa có tin nhắn nào bị gỡ",
+      infoFiltered: "(lọc theo _MAX_ total records)",
+      paginate: {
+        first: "<<",
+        last: ">>",
+        next: ">",
+        previous: "<",
+      },
+    },
+  });
+});

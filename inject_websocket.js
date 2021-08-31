@@ -1,8 +1,27 @@
+// Lưu tất cả tin nhắn - có thể truy cập được từ console trong web facebook
+let rvdfm_all_msgs = [];
+
+// Hàm dùng để xóa hết tin nhắn đã lưu - có thể dùng từ console
+const rvdfm_clear = () => {
+  const count = rvdfm_all_msgs.length;
+  rvdfm_all_msgs = [];
+  localStorage.removeItem("rvdfm_all_msgs");
+
+  console.log(`> ĐÃ XÓA ${count} TIN NHẮN ĐƯỢC LƯU BỞI RVDFM.`);
+};
+
 (function () {
-  console.log("Extension Xem Tin Nhắn Bị Gỡ Trên FB đã BẬT");
+  console.log("Extension RVDFM - Xem Tin Nhắn Bị Gỡ Trên FB đã BẬT");
+
+  rvdfm_all_msgs = JSON.parse(localStorage.rvdfm_all_msgs || "[]");
+  console.log(`Đã tải lên ${rvdfm_all_msgs.length} tin nhắn từ LocalStorage.`);
+
+  // Lưu lại vào localStorage mỗi khi tắt tab
+  window.addEventListener("beforeunload", () => {
+    localStorage.rvdfm_all_msgs = JSON.stringify(rvdfm_all_msgs);
+  });
 
   //#region ============================ Những hàm hỗ trợ ============================
-
   // Hàm decode data websocket về tiếng việt, loại bỏ những thằng \\
   const parse = (str) => {
     let ret = str;
@@ -20,51 +39,45 @@
 
   // Hàm xuất ra console, xuất chữ và hình - https://stackoverflow.com/a/26286167
   const log = {
-    text: (str, color = "white", bg = "black") => {
+    text: (str, color = "white", bg = "blue") => {
       console.log(`%c${str}`, `color: ${color}; background: ${bg}`);
     },
-    image: (url) => {
-      var img = new Image();
-      img.onload = function () {
-        const ratio = this.width / this.height;
-        const h = this.height > 150 ? 300 : 150,
-          w = ratio * h;
-        var style = [
-          "font-size: 1px;",
-          `line-height: ${h % 2}px;`,
-          `padding: ${h * 0.5}px ${w * 0.5}px;`,
-          `background-size: ${w}px ${h}px;`,
-          `background-image: url("${url}")`,
-        ].join(" ");
+    media: (url) => {
+      if (url.includes("video")) {
+        log.text("video:");
         console.log(url);
-        console.log("%c ", style);
-      };
-      img.src = url;
+      } else {
+        var img = new Image();
+        img.onload = function () {
+          const ratio = this.width / this.height;
+          const h = this.height > 150 ? 300 : 150,
+            w = ratio * h;
+          var style = [
+            "font-size: 1px;",
+            `line-height: ${h % 2}px;`,
+            `padding: ${h * 0.5}px ${w * 0.5}px;`,
+            `background-size: ${w}px ${h}px;`,
+            `background-image: url("${url}")`,
+          ].join(" ");
+          console.log(url);
+          console.log("%c ", style);
+        };
+        img.onerror = function () {
+          console.log("[Không tải được ảnh]", url);
+        };
+        img.src = url;
+      }
     },
-  };
-
-  // https://stackoverflow.com/a/18837750
-  const isLinkExists = (image_url) => {
-    var http = new XMLHttpRequest();
-    http.open("HEAD", image_url, false);
-    http.send();
-    return http.status != 404;
   };
 
   // https://stackoverflow.com/a/25847017
-  const sendToBackgroundPage = (data) => {
-    var event = new CustomEvent("rvdfmPassToBackground", {
-      detail: { ...data, time: Date.now() },
-    });
+  const sendToBackgroundJs = (data) => {
+    var event = new CustomEvent("rvdfmPassToBackground", { detail: data });
     window.dispatchEvent(event);
   };
   // #endregion
 
   //#region ========================================= BẮT ĐẦU HACK :)) =========================================
-
-  // Lưu tất cả tin nhắn, và những tin nhắn bị gỡ
-  const all_msgs = {};
-  const deleted_msgs = {};
 
   // Lưu lại webSocket gốc của browser
   const original_WebSocket = window.WebSocket;
@@ -79,124 +92,177 @@
       const utf8_str = new TextDecoder("utf-8").decode(achunk.data);
 
       if (utf8_str[0] === "1" || utf8_str[0] === "2" || utf8_str[0] === "3") {
-        const msg_id_regex = utf8_str.match(/(?=mid\.\$)(.*?)(?=\\")/);
+        // Xem trong dữ liệu có id của tin nhắn nào không
+        const have_msg_id = utf8_str.match(/(?=mid\.\$)(.*?)(?=\\")/);
+        if (!have_msg_id) return;
 
-        if (msg_id_regex?.length) {
-          const msgid = msg_id_regex[0];
-          console.log(`\n\nLúc ${new Date().toLocaleString()}: id=${msgid}`);
+        // Lấy ra tất cả các thông tin dùng được trong dữ liệu (những chuỗi nằm giữa 2 dấu nháy kép)
+        const all_strings_regex = /(\\\")(.*?)(\\\")/g;
+        let all_strings = utf8_str.match(all_strings_regex) || [];
+        all_strings = all_strings.map((str) => parse(str));
 
-          const is_new_msg = utf8_str.includes(`[_=>LS.sp(\\"170\\",`);
-          const is_list_msgs = utf8_str.includes(`[_=>LS.sp(\\"130\\",`);
-          const is_delete_msg = utf8_str.includes(`[_=>LS.sp(\\"125\\",`);
+        log.text("VÀO LÚC " + new Date().toLocaleString());
+        console.log("Mọi thông tin: ", { all: all_strings });
 
-          //#region =============================== SIGNAL THU HỒI TIN NHẮN ===============================
-          // Nếu id của tin nhắn này đã có trong all_msg
-          // => (Rất Có thể) là event Thu hồi
+        // hàm hỗ trợ
+        const isMsgIdStr = (str) => str?.startsWith("mid.$");
+        const isLink = (str) => str?.startsWith("https://");
 
-          if (is_delete_msg) {
-            if (!all_msgs[msgid]) {
-              sendToBackgroundPage({
-                type: "deleted_unknow_msg",
-                msgid: msgid,
+        // Bắt đầu lấy ra những tin nhắn từ lượng thông tin trên
+        let chat = [];
+        for (let i = 0; i < all_strings.length; i++) {
+          const str_i = all_strings[i];
+
+          // Tin nhắn chữ
+          if (
+            (str_i === "124" || str_i === "123") &&
+            isMsgIdStr(all_strings[i + 2])
+          ) {
+            const content = all_strings[i + 1];
+            if (content) {
+              chat.push({
+                type: "Tin nhắn",
+                id: all_strings[i + 2],
+                content: content,
               });
-            } else {
-              deleted_msgs[msgid] = all_msgs[msgid];
-              delete all_msgs[msgid];
+            }
+          }
 
-              sendToBackgroundPage({
-                type: "deleted_msg",
-                msgid: msgid,
-                msg_data: deleted_msgs[msgid],
-              });
+          // Tin nhắn image / gif / video
+          if (str_i === "591" && isLink(all_strings[i + 2])) {
+            const isImg = all_strings[i + 1]?.startsWith("image-");
+            const isGif = all_strings[i + 1]?.startsWith("gif-");
+            const isVideo = all_strings[i + 1]?.startsWith("video-");
+            const isAudio = all_strings[i + 1]?.startsWith("audioclip-");
 
-              log.text("Tin nhắn đã bị thu hồi: ", "red");
+            const type = isImg
+              ? "hình ảnh"
+              : isGif
+              ? "GIF"
+              : isVideo
+              ? "video"
+              : isAudio
+              ? "âm thanh"
+              : "media ?";
 
-              if (deleted_msgs[msgid].type === "text") {
-                log.text(deleted_msgs[msgid].content);
-              }
-
-              if (deleted_msgs[msgid].type === "image") {
-                deleted_msgs[msgid].content
-                  .split(",")
-                  .forEach((url) => log.image(url));
+            for (let j = i; j < all_strings.length - 1; j++) {
+              if (isMsgIdStr(all_strings[j])) {
+                chat.push({
+                  type: "Tin nhắn " + type,
+                  id: all_strings[j],
+                  content: all_strings[i + 2],
+                });
+                break;
               }
             }
-
-            return;
           }
-          //#endregion
 
-          //#region =============================== TIN NHẮN CHỮ ===============================
-          // Tin nhắn chữ sẽ nằm giữa đoạn \"124\\", \\" TỚI \\",
-          const text_content_regex = utf8_str.match(
-            /(?<=\\"124\\", \\")(.*?)(?=\\",)/
-          );
+          // Tin nhắn nhãn dán
+          if (str_i === "144" && isMsgIdStr(all_strings[i + 1])) {
+            chat.push({
+              type: "Tin nhắn nhãn dán",
+              id: all_strings[i + 1],
+              content: all_strings[i + 3],
+            });
+          }
 
-          if (is_new_msg && text_content_regex?.length) {
-            const content = parse(text_content_regex[0]);
-            log.text(content);
+          // Thả react
+          if (str_i === "110" && isMsgIdStr(all_strings[i + 1])) {
+            chat.push({
+              type: "Thả react",
+              id: all_strings[i + 1],
+              content: all_strings[i + 2],
+            });
+          }
 
-            // Lưu lại
-            const save_data = {
-              type: "new_msg_text",
-              msgid: msgid,
+          // Gỡ react
+          if (str_i === "111" && isMsgIdStr(all_strings[i + 1])) {
+            const id = all_strings[i + 1];
+            const content =
+              rvdfm_all_msgs.find((c) => c.id === id)?.content || "";
+            chat.push({
+              type: "Gỡ react",
+              id: id,
               content: content,
-            };
-            all_msgs[msgid] = save_data;
-            sendToBackgroundPage(save_data);
-
-            return;
+            });
           }
-          //#endregion
 
-          //#region =============================== TIN NHẮN HÌNH ẢNH/VIDEO ===============================
-          // Hình ảnh là đoạn bắt đầu bằng "https VÀ kết thúc bằng "
-          const img_contents_regex = utf8_str.match(
-            /(https:)(.*?)(\.xx\.fbcdn\.net)(.*?)(?=\\\",)/g
-          );
+          // Tin nhắn chia sẻ: link / vị trí / vị trí trực tiếp
+          if (
+            str_i === "414" &&
+            isMsgIdStr(all_strings[i + 2]) &&
+            isLink(all_strings[i + 5])
+          ) {
+            const link = all_strings[i + 5];
 
-          if (is_new_msg && img_contents_regex?.length) {
-            // decode từng thằng
-            let urls = img_contents_regex.map((str) => parse(str));
-
-            // Lọc ra những link trùng nhau - https://www.javascripttutorial.net/array/javascript-remove-duplicates-from-array/
-            let unique_urls = [...new Set(urls)];
-
-            // Lọc ra những link kích thước nhỏ (có "/s x" hoặc "/p x" trong link)
-            // Chỉ lọc khi có nhiều hơn 1 hình
-            if (unique_urls.length > 1) {
-              unique_urls = unique_urls.filter(
-                (url) => !url.match(/(s\d+x\d+)|(p\d+x\d+)/g)?.length
-              );
-            }
-
-            // Lọc ra những link hỏng
-            unique_urls = unique_urls.map((url) => isLinkExists(url));
-
-            unique_urls.forEach((url) => log.image(url));
-
-            // Lưu lại
-            const save_data = {
-              type: "new_msg_img",
-              msgid: msgid,
-              content: unique_urls.join(","),
-            };
-            all_msgs[msgid] = save_data;
-            sendToBackgroundPage(save_data);
-
-            return;
+            chat.push({
+              type: "Tin nhắn chia sẻ",
+              id: all_strings[i + 2],
+              link: link,
+            });
           }
-          //#endregion
 
-          //#region =========== Lấy ra tất cả chuỗi ===========
-          // Trường hợp lấy được id tin nhắn, mà ko lấy được chữ hay hình, thì show ra hết chuỗi => dùng để debug
-          // Do socket có mã 1 ở đầu được dùng bởi nhiều event khác ngoài nhắn tin, mấy event đó sẽ vô đây !??
-          const all_strings_regex = /(\\\")(.*?)(\\\")/g;
-          let all_strings = utf8_str.match(all_strings_regex) || [];
-          all_strings = all_strings.map((str) => parse(str));
-          console.log("> Mọi thông tin: ", all_strings);
-          //#endregion
+          // Thông tin user
+          // if (str_i === "533" && isLink(all_strings[i + 1])) {
+          //   const avatar = all_strings[i + 1];
+          //   const user_name = all_strings[i + 2];
+
+          //   chat.push({
+          //     type: "Người dùng",
+          //     avatar: avatar,
+          //     name: user_name,
+          //   });
+          // }
+
+          // Tin nhắn đang chờ
+          // if (str_i === "130" && all_strings[i + 3] === "pending") {
+          //   chat.push({
+          //     type: "Tin nhắn đang chờ",
+          //     content: all_strings[i + 1],
+          //     avatar: all_strings[i + 2],
+          //   });
+          // }
+
+          // Thu hồi tin nhắn
+          if (str_i === "594" && isMsgIdStr(all_strings[i + 1])) {
+            const id = all_strings[i + 1];
+            const msg = rvdfm_all_msgs.find((c) => c.id === id) || "";
+
+            chat.push({
+              type: "Thu hồi tin nhắn",
+              id: id,
+              msg: msg,
+            });
+          }
         }
+
+        console.log("Thông tin lọc được:", chat);
+
+        // Lưu vào rvdfm_all_msgs
+        const old_length = rvdfm_all_msgs.length;
+        for (let c of chat) {
+          let isDuplicated = false;
+          for (let r of rvdfm_all_msgs) {
+            if (JSON.stringify(c) === JSON.stringify(r)) {
+              isDuplicated = true;
+              break;
+            }
+          }
+
+          if (!isDuplicated) {
+            rvdfm_all_msgs = rvdfm_all_msgs.concat(chat);
+          }
+        }
+
+        // Hiển thị thông tin lưu tin nhắn mới
+        const new_lenght = rvdfm_all_msgs.length;
+        const new_msg_count = new_lenght - old_length;
+        new_msg_count &&
+          log.text(
+            `> Đã lưu ${new_msg_count} tin nhắn mới! (${new_lenght})`,
+            "white",
+            "green"
+          );
       }
     });
 

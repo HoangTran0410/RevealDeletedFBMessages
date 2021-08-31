@@ -1,0 +1,11 @@
+body {
+    min-height: 200px;
+    width: 400px;
+    background-color: #fff;
+}
+
+h1,
+h2,
+h3 {
+    text-align: center;
+}

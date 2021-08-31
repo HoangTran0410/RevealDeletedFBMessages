@@ -1,0 +1,24 @@
+.rvdfm-notification {
+    display: flex;
+    background-color: white;
+    border: rgb(242, 105, 77) 1px solid;
+    border-radius: 5px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: medium;
+    width: 450px;
+    padding: 8px;
+    position: fixed;
+    bottom: -300px;
+    right: 30px;
+    align-items: center;
+    z-index: 1000;
+    transition: all .5s;
+}
+
+.rvdfm-notification>img {
+    margin-right: 12px;
+}
+
+.rvdfm-notification b {
+    color: green;
+}
