@@ -41,7 +41,7 @@ const rvdfm_clear = () => {
 
   // Hàm xuất ra console, xuất chữ và hình - https://stackoverflow.com/a/26286167
   const log = {
-    text: (str, color = "white", bg = "blue") => {
+    text: (str, color = "white", bg = "transparent") => {
       console.log(`%c${str}`, `color: ${color}; background: ${bg}`);
     },
     media: (url) => {
@@ -103,7 +103,11 @@ const rvdfm_clear = () => {
         let all_strings = utf8_str.match(all_strings_regex) || [];
         all_strings = all_strings.map((str) => parse(str));
 
-        log.text("RVDFM - VÀO LÚC " + new Date().toLocaleString());
+        log.text(
+          "RVDFM - VÀO LÚC " + new Date().toLocaleString(),
+          "blue",
+          "#fff9"
+        );
         console.log("Mọi thông tin: ", { all: all_strings });
 
         // hàm hỗ trợ
@@ -232,7 +236,7 @@ const rvdfm_clear = () => {
             const msg = rvdfm_all_msgs.find((c) => c.id === id) || "";
 
             chat.push({
-              type: "Thu hồi tin nhắn",
+              type: "Tin nhắn thu hồi",
               id: id,
               msg: msg,
             });
@@ -254,6 +258,13 @@ const rvdfm_clear = () => {
 
           if (!isDuplicated) {
             rvdfm_all_msgs = rvdfm_all_msgs.concat(chat);
+
+            if (c.type === "Tin nhắn thu hồi") {
+              log.text("> Tin nhắn thu hồi: ", "white", "red");
+              console.log(
+                c.msg || "(RVDFM: không có dữ liệu cho tin nhắn này)"
+              );
+            }
           }
         }
 
@@ -263,7 +274,6 @@ const rvdfm_clear = () => {
         new_msg_count &&
           log.text(
             `> RVDFM Đã lưu ${new_msg_count} tin nhắn mới! (${new_lenght})`,
-            "white",
             "green"
           );
       }

@@ -50,7 +50,7 @@ setTimeout(() => {
   const notificationText = notification.getElementsByTagName("p")[0];
 
   notificationText.innerHTML =
-    "RVFDM - Xem tin nhắn bị gỡ trên fb <b>ĐANG BẬT</b>";
+    "RVDFM - Xem tin nhắn bị gỡ trên fb <b>ĐANG BẬT</b>";
   notification.style.bottom = "30px";
 
   setTimeout(function () {
