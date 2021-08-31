@@ -14,7 +14,7 @@ const rvdfm_clear = () => {
   console.log("Extension RVDFM - Xem Tin Nhắn Bị Gỡ Trên FB đã BẬT");
 
   rvdfm_all_msgs = JSON.parse(localStorage.rvdfm_all_msgs || "[]");
-  console.log(`Đã tải lên ${rvdfm_all_msgs.length} tin nhắn từ LocalStorage.`);
+  console.log(`RVDFM Đã tải lên ${rvdfm_all_msgs.length} tin nhắn từ LocalStorage.`);
 
   // Lưu lại vào localStorage mỗi khi tắt tab
   window.addEventListener("beforeunload", () => {
@@ -101,7 +101,7 @@ const rvdfm_clear = () => {
         let all_strings = utf8_str.match(all_strings_regex) || [];
         all_strings = all_strings.map((str) => parse(str));
 
-        log.text("VÀO LÚC " + new Date().toLocaleString());
+        log.text("RVDFM - VÀO LÚC " + new Date().toLocaleString());
         console.log("Mọi thông tin: ", { all: all_strings });
 
         // hàm hỗ trợ
@@ -259,7 +259,7 @@ const rvdfm_clear = () => {
         const new_msg_count = new_lenght - old_length;
         new_msg_count &&
           log.text(
-            `> Đã lưu ${new_msg_count} tin nhắn mới! (${new_lenght})`,
+            `> RVDFM Đã lưu ${new_msg_count} tin nhắn mới! (${new_lenght})`,
             "white",
             "green"
           );
