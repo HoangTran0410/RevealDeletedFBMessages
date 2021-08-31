@@ -127,7 +127,7 @@ const rvdfm_clear = () => {
             const content = all_strings[i + 1];
             if (content) {
               chat.push({
-                type: "Tin nhắn",
+                type: "chữ",
                 id: all_strings[i + 2],
                 content: content,
               });
@@ -154,7 +154,7 @@ const rvdfm_clear = () => {
             for (let j = i; j < all_strings.length - 1; j++) {
               if (isMsgIdStr(all_strings[j])) {
                 chat.push({
-                  type: "Tin nhắn " + type,
+                  type: type,
                   id: all_strings[j],
                   content: all_strings[i + 2],
                 });
@@ -166,7 +166,7 @@ const rvdfm_clear = () => {
           // Tin nhắn nhãn dán
           if (str_i === "144" && isMsgIdStr(all_strings[i + 1])) {
             chat.push({
-              type: "Tin nhắn nhãn dán",
+              type: "Nhãn dán",
               id: all_strings[i + 1],
               content: all_strings[i + 3],
             });
@@ -203,7 +203,7 @@ const rvdfm_clear = () => {
             const link = all_strings[i + 5];
 
             chat.push({
-              type: "Tin nhắn chia sẻ",
+              type: "Chia sẻ",
               id: all_strings[i + 2],
               link: link,
             });
@@ -236,7 +236,7 @@ const rvdfm_clear = () => {
             const msg = rvdfm_all_msgs.find((c) => c.id === id) || "";
 
             chat.push({
-              type: "Tin nhắn thu hồi",
+              type: "Thu hồi",
               id: id,
               msg: msg,
             });
@@ -259,8 +259,12 @@ const rvdfm_clear = () => {
           if (!isDuplicated) {
             rvdfm_all_msgs = rvdfm_all_msgs.concat(chat);
 
-            if (c.type === "Tin nhắn thu hồi") {
-              log.text("> Tin nhắn thu hồi: ", "white", "red");
+            if (c.type === "Thu hồi") {
+              log.text(
+                `> Tin nhắn thu hồi: (${c.msg?.type || "Không rõ loại"})`,
+                "black",
+                "#f35369"
+              );
               console.log(
                 c.msg || "(RVDFM: không có dữ liệu cho tin nhắn này)"
               );
