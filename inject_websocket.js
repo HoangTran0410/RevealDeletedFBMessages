@@ -249,7 +249,10 @@ const rvdfmSendDeletedMsgToContentJs = (msg) => {
           // Thu hồi tin nhắn
           if (str_i === "594" && isMsgIdStr(all_strings[i + 1])) {
             const id = all_strings[i + 1];
-            const msgs = rvdfm_all_msgs.filter((c) => c.id === id) || [];
+            const msgs =
+              rvdfm_all_msgs.filter(
+                (c) => c.id === id && c.type !== "Thu hồi"
+              ) || [];
 
             chat.push({
               type: "Thu hồi",
