@@ -36,12 +36,17 @@
       "js": ["./content.js"],
       "css": ["./content.css"],
       "matches": ["*://*.facebook.com/*", "*://*.messenger.com/*"],
-      "run_at": "document_start",
-      "all_frames": true
+      "run_at": "document_start"
+    },
+    {
+      "js": ["./libs/swal2.js"],
+      "matches": ["*://*.facebook.com/*", "*://*.messenger.com/*"],
+      "run_at": "document_idle"
     }
   ],
   "web_accessible_resources": [
     "inject_websocket.js",
+    "libs/swal2.js",
     "icons/icon16.png",
     "icons/icon32.png"
   ]

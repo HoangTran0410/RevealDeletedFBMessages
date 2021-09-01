@@ -8,7 +8,7 @@ const rvdfm_clear = () => {
   localStorage.removeItem("rvdfm_all_msgs");
 
   console.log(`> ĐÃ XÓA ${count} TIN NHẮN ĐƯỢC LƯU BỞI RVDFM.`);
-  rvdfmSendCounterToContentJs(count, 0);
+  rvdfmSendSavedCounterToContentJs(count, 0);
 };
 
 // https://stackoverflow.com/a/25847017
@@ -17,16 +17,16 @@ const rvdfmSendToBackgroundJs = (data) => {
   window.dispatchEvent(event);
 };
 
-const rvdfmSendCounterToContentJs = (count, newLength) => {
-  var event = new CustomEvent("rvdfmShowCounter", {
+const rvdfmSendSavedCounterToContentJs = (count, newLength) => {
+  var event = new CustomEvent("rvdfmSavedCounter", {
     detail: { count, newLength },
   });
   window.dispatchEvent(event);
 };
 
-const rvdfmSendDeletedMsgToContentJs = (msg) => {
+const rvdfmSendDeletedMsgToContentJs = (msgs) => {
   var event = new CustomEvent("rvdfmDeletedMsg", {
-    detail: msg,
+    detail: msgs,
   });
   window.dispatchEvent(event);
 };
@@ -38,7 +38,11 @@ const rvdfmSendDeletedMsgToContentJs = (msg) => {
   console.log(
     `RVDFM Đã tải lên ${rvdfm_all_msgs.length} tin nhắn từ LocalStorage.`
   );
-  rvdfmSendCounterToContentJs(0, rvdfm_all_msgs.length);
+
+  // Gửi event để hiển thị trên floating modal UI
+  window.addEventListener("load", () => {
+    rvdfmSendSavedCounterToContentJs(0, rvdfm_all_msgs.length);
+  });
 
   // Lưu lại vào localStorage mỗi khi tắt tab
   window.addEventListener("beforeunload", () => {
@@ -278,7 +282,7 @@ const rvdfmSendDeletedMsgToContentJs = (msg) => {
           if (!isDuplicated) {
             rvdfm_all_msgs = rvdfm_all_msgs.concat(chat);
 
-            if (c.type === "Thu hồi" && chat.length === 1) {
+            if (c.type === "Thu hồi") {
               log.text(
                 `> Tin nhắn thu hồi: (${c.msg?.type || "Không rõ loại"})`,
                 "black",
@@ -297,7 +301,7 @@ const rvdfmSendDeletedMsgToContentJs = (msg) => {
         const new_lenght = rvdfm_all_msgs.length;
         const new_msg_count = new_lenght - old_length;
         if (new_msg_count) {
-          rvdfmSendCounterToContentJs(new_msg_count, new_lenght);
+          rvdfmSendSavedCounterToContentJs(new_msg_count, new_lenght);
           log.text(
             `> RVDFM Đã lưu ${new_msg_count} tin nhắn mới! (${new_lenght})`,
             "green"
