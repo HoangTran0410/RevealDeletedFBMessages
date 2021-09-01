@@ -13,8 +13,6 @@
     align-items: center;
     z-index: 1000;
     transition: all .5s;
-    align-items: flex-start;
-    justify-content: flex-start;
 }
 
 .rvdfm-notification>img {
@@ -43,6 +41,8 @@
     position: fixed;
     padding: 8px 8px;
     cursor: move;
+    align-items: flex-start;
+    justify-content: flex-start;
 }
 
 .rvdfm-saved-counter>img {
