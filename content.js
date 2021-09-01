@@ -85,7 +85,7 @@ clearAllSavedMsg.innerHTML = "Xóa tất cả";
 clearAllSavedMsg.title = "Xóa những tin nhắn đã lưu bởi RVDFM";
 clearAllSavedMsg.onclick = () => {
   alert(
-    `Chức năng chưa hoàn thành!\nBạn vui lòng bấm F12 vào console gõ câu lệnh rvdfm_clear() và Enter để xóa nhé.`
+    `Chức năng Xóa tất cả TIN NHẮN ĐÃ LƯU chưa hoàn thành!\nBạn vui lòng bấm F12 vào console gõ câu lệnh rvdfm_clear() và Enter để xóa nhé.`
   );
   // BUG: không thể truy cập rvdfm_all_msgs hay localStorage.rvdfm_all_msgs ?????
   // const count = JSON.parse(localStorage.rvdfm_all_msgs)?.length;
@@ -102,7 +102,7 @@ showAllSavedMsgBtn.innerHTML = "Xem tất cả";
 showAllSavedMsgBtn.title = "Xem tất cả tin nhắn được lưu bởi RVDFM";
 showAllSavedMsgBtn.onclick = () => {
   alert(
-    `Chức năng chưa hoàn thành!\nBạn vui lòng bấm F12 vào console gõ câu lệnh rvdfm_all_msgs và Enter để xem nhé.`
+    `Chức năng Xem tất cả TIN NHẮN ĐÃ LƯU chưa hoàn thành!\nBạn vui lòng bấm F12 vào console gõ câu lệnh rvdfm_all_msgs và Enter để xem nhé.`
   );
 };
 btnsContainer.appendChild(showAllSavedMsgBtn);
