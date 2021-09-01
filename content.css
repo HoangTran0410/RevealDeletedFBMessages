@@ -71,7 +71,7 @@
 
 .rvdfm-saved-counter button {
     display: none;
-    margin-top: 10px;
+    margin: 10px 5px;
     padding: 5px 10px;
     font-weight: bold;
     cursor: pointer;
