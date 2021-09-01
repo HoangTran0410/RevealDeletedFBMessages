@@ -70,15 +70,25 @@
 
 .rvdfm-saved-counter button {
     display: none;
-    background-color: black;
     margin-top: 10px;
     padding: 5px 10px;
-    color: red;
     font-weight: bold;
     cursor: pointer;
+
+    color: red;
     border-color: black;
+    background-color: black;
 }
+
 .rvdfm-saved-counter button:hover {
     border-color: red;
-    background-color: rgb(90, 90, 90);
+    background-color: rgb(65, 65, 65);
+}
+
+.rvdfm-saved-counter button.green {
+    color: rgb(3, 185, 3);
+}
+
+.rvdfm-saved-counter button.green:hover {
+    border-color: rgb(8, 197, 8);
 }

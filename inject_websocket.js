@@ -8,6 +8,27 @@ const rvdfm_clear = () => {
   localStorage.removeItem("rvdfm_all_msgs");
 
   console.log(`> ĐÃ XÓA ${count} TIN NHẮN ĐƯỢC LƯU BỞI RVDFM.`);
+  rvdfmSendCounterToContentJs(count, 0);
+};
+
+// https://stackoverflow.com/a/25847017
+const rvdfmSendToBackgroundJs = (data) => {
+  var event = new CustomEvent("rvdfmPassToBackground", { detail: data });
+  window.dispatchEvent(event);
+};
+
+const rvdfmSendCounterToContentJs = (count, newLength) => {
+  var event = new CustomEvent("rvdfmShowCounter", {
+    detail: { count, newLength },
+  });
+  window.dispatchEvent(event);
+};
+
+const rvdfmSendDeletedMsgToContentJs = (msg) => {
+  var event = new CustomEvent("rvdfmDeletedMsg", {
+    detail: msg,
+  });
+  window.dispatchEvent(event);
 };
 
 (function () {
@@ -17,6 +38,7 @@ const rvdfm_clear = () => {
   console.log(
     `RVDFM Đã tải lên ${rvdfm_all_msgs.length} tin nhắn từ LocalStorage.`
   );
+  rvdfmSendCounterToContentJs(0, rvdfm_all_msgs.length);
 
   // Lưu lại vào localStorage mỗi khi tắt tab
   window.addEventListener("beforeunload", () => {
@@ -70,28 +92,6 @@ const rvdfm_clear = () => {
         img.src = url;
       }
     },
-  };
-
-  // https://stackoverflow.com/a/25847017
-  const sendToBackgroundJs = (data) => {
-    var event = new CustomEvent("rvdfmPassToBackground", { detail: data });
-    window.dispatchEvent(event);
-  };
-
-  const sendCounterToContentJs = (count, newLength) => {
-    var event = new CustomEvent("rvdfmShowCounter", {
-      detail: { count, newLength },
-    });
-    window.dispatchEvent(event);
-  };
-
-  sendCounterToContentJs(0, rvdfm_all_msgs.length);
-
-  const sendDeletedMsgToContentJs = (msg) => {
-    var event = new CustomEvent("rvdfmDeletedMsg", {
-      detail: msg,
-    });
-    window.dispatchEvent(event);
   };
   // #endregion
 
@@ -275,7 +275,7 @@ const rvdfm_clear = () => {
           if (!isDuplicated) {
             rvdfm_all_msgs = rvdfm_all_msgs.concat(chat);
 
-            if (c.type === "Thu hồi") {
+            if (c.type === "Thu hồi" && chat.length === 1) {
               log.text(
                 `> Tin nhắn thu hồi: (${c.msg?.type || "Không rõ loại"})`,
                 "black",
@@ -285,7 +285,7 @@ const rvdfm_clear = () => {
                 c.msg || "(RVDFM: không có dữ liệu cho tin nhắn này)"
               );
 
-              sendDeletedMsgToContentJs(c.msg);
+              rvdfmSendDeletedMsgToContentJs(c.msg);
             }
           }
         }
@@ -294,7 +294,7 @@ const rvdfm_clear = () => {
         const new_lenght = rvdfm_all_msgs.length;
         const new_msg_count = new_lenght - old_length;
         if (new_msg_count) {
-          sendCounterToContentJs(new_msg_count, new_lenght);
+          rvdfmSendCounterToContentJs(new_msg_count, new_lenght);
           log.text(
             `> RVDFM Đã lưu ${new_msg_count} tin nhắn mới! (${new_lenght})`,
             "green"

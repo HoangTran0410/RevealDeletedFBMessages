@@ -76,13 +76,16 @@ const counterText = document.createElement("p");
 counterText.innerHTML = "RVDFM xin chào";
 container.appendChild(counterText);
 
+// =================== Buttons =========================
 // Clear all saved msg btn
+const btnsContainer = document.createElement("div");
+
 const clearAllSavedMsg = document.createElement("button");
 clearAllSavedMsg.innerHTML = "Xóa tất cả";
 clearAllSavedMsg.title = "Xóa những tin nhắn đã lưu bởi RVDFM";
 clearAllSavedMsg.onclick = () => {
   alert(
-    "Chức năng chưa hoàn thành. Bạn vui lòng bấm F12 vào console gõ câu lệnh rvdfm_clear() và Enter nhé."
+    `Chức năng chưa hoàn thành!\nBạn vui lòng bấm F12 vào console gõ câu lệnh rvdfm_clear() và Enter để xóa nhé.`
   );
   // BUG: không thể truy cập rvdfm_all_msgs hay localStorage.rvdfm_all_msgs ?????
   // const count = JSON.parse(localStorage.rvdfm_all_msgs)?.length;
@@ -90,8 +93,22 @@ clearAllSavedMsg.onclick = () => {
   // localStorage.removeItem("rvdfm_all_msgs");
   // counterText.innerHTML = `Đã xóa ${count} tin nhắn khỏi bộ nhớ RVDFM.`;
 };
-container.appendChild(clearAllSavedMsg);
+btnsContainer.appendChild(clearAllSavedMsg);
 
+// Show all saved msgs
+const showAllSavedMsgBtn = document.createElement("button");
+showAllSavedMsgBtn.className = "green";
+showAllSavedMsgBtn.innerHTML = "Xem tất cả";
+showAllSavedMsgBtn.title = "Xem tất cả tin nhắn được lưu bởi RVDFM";
+showAllSavedMsgBtn.onclick = () => {
+  alert(
+    `Chức năng chưa hoàn thành!\nBạn vui lòng bấm F12 vào console gõ câu lệnh rvdfm_all_msgs và Enter để xem nhé.`
+  );
+};
+btnsContainer.appendChild(showAllSavedMsgBtn);
+container.appendChild(btnsContainer);
+
+// ========================= DELETED MSGS ===============================
 // Tin nhắn thu hồi
 const deletedMes = document.createElement("div");
 deletedMes.className = "deleted-msg";
@@ -112,6 +129,7 @@ savedCounter.appendChild(container);
 // Add to current page.
 doc.appendChild(savedCounter);
 
+// ================================= EVENTS ============================
 const getNow = () => new Date().toLocaleTimeString();
 
 // Show counter
@@ -119,9 +137,14 @@ window.addEventListener(
   "rvdfmShowCounter",
   function (evt) {
     const { count, newLength } = evt.detail;
-    counterText.innerText = `RVDFM Đã lưu thêm được ${count} tin nhắn (${getNow()}). (tổng: ${newLength})`;
     if (newLength) {
-      clearAllSavedMsg.style.display = "flex";
+      counterText.innerText = `RVDFM Đã lưu thêm được ${count} tin nhắn (${getNow()}). (tổng: ${newLength})`;
+      clearAllSavedMsg.style.display = "inline-block";
+      showAllSavedMsgBtn.style.display = "inline-block";
+    } else {
+      counterText.innerText = `Đã xóa ${count} tin nhắn khỏi bộ nhớ RVDFM`;
+      clearAllSavedMsg.style.display = "none";
+      showAllSavedMsgBtn.style.display = "none";
     }
   },
   false
