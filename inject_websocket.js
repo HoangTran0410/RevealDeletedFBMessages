@@ -4,7 +4,7 @@ let rvdfm_all_msgs = [];
 // Hàm dùng để xóa hết tin nhắn đã lưu - có thể dùng từ console
 const rvdfm_clear = () => {
   const count = rvdfm_all_msgs.length;
-  rvdfm_all_msgs = [];
+  rvdfm_all_msgs.length = 0;
   localStorage.removeItem("rvdfm_all_msgs");
 
   console.log(`> ĐÃ XÓA ${count} TIN NHẮN ĐƯỢC LƯU BỞI RVDFM.`);
@@ -77,6 +77,22 @@ const rvdfm_clear = () => {
     var event = new CustomEvent("rvdfmPassToBackground", { detail: data });
     window.dispatchEvent(event);
   };
+
+  const sendCounterToContentJs = (count, newLength) => {
+    var event = new CustomEvent("rvdfmShowCounter", {
+      detail: { count, newLength },
+    });
+    window.dispatchEvent(event);
+  };
+
+  sendCounterToContentJs(0, rvdfm_all_msgs.length);
+
+  const sendDeletedMsgToContentJs = (msg) => {
+    var event = new CustomEvent("rvdfmDeletedMsg", {
+      detail: msg,
+    });
+    window.dispatchEvent(event);
+  };
   // #endregion
 
   //#region ========================================= BẮT ĐẦU HACK :)) =========================================
@@ -99,7 +115,7 @@ const rvdfm_clear = () => {
         if (!have_msg_id) return;
 
         // Lấy ra tất cả các thông tin dùng được trong dữ liệu (những chuỗi nằm giữa 2 dấu nháy kép)
-        const all_strings_regex = /(\\\")(.*?)(\\\")/g;
+        const all_strings_regex = /(\\\")(.*?)(\\\")(?=,)/g;
         let all_strings = utf8_str.match(all_strings_regex) || [];
         all_strings = all_strings.map((str) => parse(str));
 
@@ -127,9 +143,9 @@ const rvdfm_clear = () => {
             const content = all_strings[i + 1];
             if (content) {
               chat.push({
-                type: "chữ",
-                id: all_strings[i + 2],
+                type: "Chữ",
                 content: content,
+                id: all_strings[i + 2],
               });
             }
           }
@@ -142,21 +158,21 @@ const rvdfm_clear = () => {
             const isAudio = all_strings[i + 1]?.startsWith("audioclip-");
 
             const type = isImg
-              ? "hình ảnh"
+              ? "Hình ảnh"
               : isGif
               ? "GIF"
               : isVideo
-              ? "video"
+              ? "Video"
               : isAudio
-              ? "âm thanh"
-              : "đính kèm";
+              ? "Âm thanh"
+              : "Đính kèm";
 
             for (let j = i; j < all_strings.length - 1; j++) {
               if (isMsgIdStr(all_strings[j])) {
                 chat.push({
                   type: type,
-                  id: all_strings[j],
                   content: all_strings[i + 2],
+                  id: all_strings[j],
                 });
                 break;
               }
@@ -167,8 +183,8 @@ const rvdfm_clear = () => {
           if (str_i === "144" && isMsgIdStr(all_strings[i + 1])) {
             chat.push({
               type: "Nhãn dán",
-              id: all_strings[i + 1],
               content: all_strings[i + 3],
+              id: all_strings[i + 1],
             });
           }
 
@@ -176,8 +192,8 @@ const rvdfm_clear = () => {
           if (str_i === "110" && isMsgIdStr(all_strings[i + 1])) {
             chat.push({
               type: "Thả react",
-              id: all_strings[i + 1],
               content: all_strings[i + 2],
+              id: all_strings[i + 1],
             });
           }
 
@@ -189,8 +205,8 @@ const rvdfm_clear = () => {
 
             chat.push({
               type: "Gỡ react",
-              id: id,
               content: content,
+              id: id,
             });
           }
 
@@ -204,8 +220,8 @@ const rvdfm_clear = () => {
 
             chat.push({
               type: "Chia sẻ",
+              content: link,
               id: all_strings[i + 2],
-              link: link,
             });
           }
 
@@ -237,8 +253,8 @@ const rvdfm_clear = () => {
 
             chat.push({
               type: "Thu hồi",
-              id: id,
               msg: msg,
+              id: id,
             });
           }
         }
@@ -268,6 +284,8 @@ const rvdfm_clear = () => {
               console.log(
                 c.msg || "(RVDFM: không có dữ liệu cho tin nhắn này)"
               );
+
+              sendDeletedMsgToContentJs(c.msg);
             }
           }
         }
@@ -275,11 +293,13 @@ const rvdfm_clear = () => {
         // Hiển thị thông tin lưu tin nhắn mới
         const new_lenght = rvdfm_all_msgs.length;
         const new_msg_count = new_lenght - old_length;
-        new_msg_count &&
+        if (new_msg_count) {
+          sendCounterToContentJs(new_msg_count, new_lenght);
           log.text(
             `> RVDFM Đã lưu ${new_msg_count} tin nhắn mới! (${new_lenght})`,
             "green"
           );
+        }
       }
     });
 

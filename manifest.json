@@ -40,5 +40,9 @@
       "all_frames": true
     }
   ],
-  "web_accessible_resources": ["inject_websocket.js", "icons/icon32.png"]
+  "web_accessible_resources": [
+    "inject_websocket.js",
+    "icons/icon16.png",
+    "icons/icon32.png"
+  ]
 }
