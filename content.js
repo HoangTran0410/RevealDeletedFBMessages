@@ -137,7 +137,9 @@ window.addEventListener(
   "rvdfmShowCounter",
   function (evt) {
     const { count, newLength } = evt.detail;
-    if (newLength) {
+    if (!count && !newLength) {
+      counterText.innerText = `RVDFM xin chào`;
+    } else if (newLength) {
       counterText.innerText = `RVDFM Đã lưu thêm được ${count} tin nhắn (${getNow()}). (tổng: ${newLength})`;
       clearAllSavedMsg.style.display = "inline-block";
       showAllSavedMsgBtn.style.display = "inline-block";
@@ -154,47 +156,61 @@ window.addEventListener(
 window.addEventListener(
   "rvdfmDeletedMsg",
   function (evt) {
-    const msg = evt.detail;
-    let str = `<br/>Tin nhắn thu hồi lúc (${getNow()}):<br/>(${
-      msg?.type?.toLowerCase() || "không rõ"
-    }): `;
+    const msgs = evt.detail;
 
-    switch (msg.type) {
-      case "Chữ":
-        let preventXSS = document.createElement("span");
-        preventXSS.innerText = msg.content;
-        deletedMes.insertBefore(preventXSS, deletedMes.firstChild);
-        break;
-      case "Hình ảnh":
-      case "Nhãn dán":
-        str += `
-        <a href="${msg.content}" target="_blank">Mở trong tab mới</a> <br/>
-        <img src="${msg.content}" />`;
-        break;
-      case "GIF":
-      case "Video":
-        str += `
-        <a href="${msg.content}" target="_blank">Mở trong tab mới</a> <br/>
-        <video controls src="${msg.content}" />`;
-        break;
-      case "Âm thanh":
-        str += `
-        <a href="${msg.content}" target="_blank">Mở trong tab mới</a> <br/>
-        <audio controls src="${msg.content}">
-            Your browser does not support the <code>audio</code> element.
-        </audio>`;
-        break;
-      case "Đính kèm":
-      case "Chia sẻ":
-        str += `<a href="${msg.content}" target="_blank">Mở trong tab mới</a> <br/>`;
-        break;
-      default:
-        str += "(RVDFM Không có dữ liệu cho tin nhắn này)";
+    for (let msg of msgs) {
+      let str = `<br/>Tin nhắn thu hồi lúc (${getNow()}):<br/>(${
+        msg?.type?.toLowerCase() || "không rõ"
+      }): `;
+
+      switch (msg.type) {
+        case "Chữ":
+          let preventXSS = document.createElement("span");
+          preventXSS.innerText = msg.content;
+          deletedMes.insertBefore(preventXSS, deletedMes.firstChild);
+          break;
+        case "Hình ảnh":
+        case "Nhãn dán":
+          str += `
+          <div>
+            <a href="${msg.content}" target="_blank">Mở trong tab mới</a> <br/>
+            <img src="${msg.content}" />
+          </div>`;
+          break;
+        case "GIF":
+        case "Video":
+          str += `
+          <div>
+            <a href="${msg.content}" target="_blank">Mở trong tab mới</a> <br/>
+            <video controls src="${msg.content}" />
+          </div>`;
+          break;
+        case "Âm thanh":
+          str += `
+          <div>
+            <a href="${msg.content}" target="_blank">Mở trong tab mới</a> <br/>
+            <audio controls src="${msg.content}">
+                Your browser does not support the <code>audio</code> element.
+            </audio>
+          <div>`;
+          break;
+        case "Đính kèm":
+        case "Chia sẻ":
+          str += `<a href="${msg.content}" target="_blank">Mở trong tab mới</a> <br/>`;
+          break;
+        default:
+          str += "(RVDFM Không có dữ liệu cho tin nhắn này)";
+      }
+
+      // append to firstc
+      const old = deletedMes.innerHTML;
+      deletedMes.innerHTML = str + old;
     }
 
-    // append to firstc
-    const old = deletedMes.innerHTML;
-    deletedMes.innerHTML = str + "<br/>" + old;
+    deletedMes.insertBefore(
+      document.createElement("hr"),
+      deletedMes.firstChild
+    );
     clearDeletedMsgBtn.style.display = "flex";
   },
   false

@@ -38,6 +38,7 @@
     top: 80px;
     left: 50%;
     /* transform: translateX(-50%); */
+    max-width: 400px;
     margin: auto;
     position: fixed;
     padding: 8px 8px;
@@ -53,7 +54,7 @@
 }
 
 .rvdfm-saved-counter .deleted-msg {
-    max-height: 300px;
+    max-height: 500px;
     overflow-y: auto;
 }
 

@@ -115,7 +115,7 @@ const rvdfmSendDeletedMsgToContentJs = (msg) => {
         if (!have_msg_id) return;
 
         // Lấy ra tất cả các thông tin dùng được trong dữ liệu (những chuỗi nằm giữa 2 dấu nháy kép)
-        const all_strings_regex = /(\\\")(.*?)(\\\")(?=,)/g;
+        const all_strings_regex = /(\\\")(.*?)(\\\")(?=[,)])/g;
         let all_strings = utf8_str.match(all_strings_regex) || [];
         all_strings = all_strings.map((str) => parse(str));
 
@@ -249,11 +249,11 @@ const rvdfmSendDeletedMsgToContentJs = (msg) => {
           // Thu hồi tin nhắn
           if (str_i === "594" && isMsgIdStr(all_strings[i + 1])) {
             const id = all_strings[i + 1];
-            const msg = rvdfm_all_msgs.find((c) => c.id === id) || "";
+            const msgs = rvdfm_all_msgs.filter((c) => c.id === id) || [];
 
             chat.push({
               type: "Thu hồi",
-              msg: msg,
+              msg: msgs,
               id: id,
             });
           }
