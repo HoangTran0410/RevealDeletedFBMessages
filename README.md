@@ -24,6 +24,6 @@ Hiện tại chưa up lên store nên các bạn sẽ cần cài đặt thủ c�
 
 ## Cập nhật
 
-- 01/08/2021: Version 2: Có giao diện ngay trong trang fb, hiển thị mọi loại tin nhắn, prevent XSS, ...
+- 01/08/2021: [Bài viết](https://www.facebook.com/groups/j2team.community/posts/1651683238497123/) Version 2: Có giao diện ngay trong trang fb, hiển thị mọi loại tin nhắn, prevent XSS, ...
 - 31/08/2021: extension đã có giao diện popup riêng. Các bạn ấn vào icon extension là sẽ thấy các tin nhắn bị gỡ.
 - 30/08/2021: chức năng cơ bản hoàn thành. Hiển thị tin nhắn trong console.
