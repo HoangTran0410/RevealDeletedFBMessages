@@ -25,7 +25,7 @@ Hiện tại chưa up lên store nên các bạn sẽ cần cài đặt thủ c�
 - RVDFM sẽ **lắng nghe và lưu** mọi tin nhắn tới và tin nhắn đi, hoặc khi bạn xem tin nhắn của ai đó RVDFM cũng sẽ lưu cho bạn
 - Khi có ai đó **thu hồi tin nhắn**, RVDFM sẽ kiểm tra xem tin nhắn đó đã được lưu hay chưa, nếu đã được lưu, RVDFM sẽ hiển thị **nội dung đã lưu** ra cho bạn.
 
-- **LƯU Ý**: Hiện tại **chưa đồng bộ** tin nhắn giữa facebook và messenger, nên RVDFM sẽ lưu tin nhắn trong 2 trang này 1 cách riêng biệt.
+- **LƯU Ý**: Hiện tại **chưa đồng bộ** tin nhắn giữa [facebook.com](https://facebook.com) và [messenger.com](https://messenger.com), nên RVDFM sẽ lưu tin nhắn trong 2 trang này 1 cách riêng biệt.
 
 ## Cập nhật
 
