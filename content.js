@@ -24,15 +24,15 @@ window.addEventListener("load", () => {
   const icon32 = chrome.runtime.getURL("icons/icon32.png");
   // const icon32 = "icons/icon32.png";
 
-  Swal.fire({
-    toast: true,
-    position: "bottom-end",
-    iconHtml: `<img src="${icon32}" alt="rvdfm floating modal" />`,
-    html: `<p><b style="color:blue">RVDFM</b> - Xem tin nhắn bị gỡ trên Facebook <b style="color: green">ĐANG BẬT</b></p>`,
-    showConfirmButton: true,
-    timerProgressBar: true,
-    timer: 5000,
-  });
+  // Swal.fire({
+  //   toast: true,
+  //   position: "bottom-end",
+  //   iconHtml: `<img src="${icon32}" alt="rvdfm floating modal" />`,
+  //   html: `<p><b style="color:blue">RVDFM</b> - Xem tin nhắn bị gỡ trên Facebook <b style="color: green">ĐANG BẬT</b></p>`,
+  //   showConfirmButton: true,
+  //   timerProgressBar: true,
+  //   timer: 5000,
+  // });
 
   document.body.insertAdjacentHTML(
     "beforeend",
