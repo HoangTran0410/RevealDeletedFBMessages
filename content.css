@@ -80,7 +80,7 @@ button.rvdfm-question-btn:hover {
 
 #rvdfm-floating-modal-header-right {
     display: none;
-    min-width: 300px;
+    min-width: 200px;
 }
 
 #rvdfm-floating-modal:hover #rvdfm-floating-modal-header-right {
