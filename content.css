@@ -1,7 +1,7 @@
 #rvdfm-floating-modal {
     position: fixed;
-    top: calc(100% - 130px);
-    left: calc(100% - 70px);
+    top: 50%;
+    left: 50%;
     max-width: 600px;
     padding: 8px 8px;
     color: white;
