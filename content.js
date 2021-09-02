@@ -180,7 +180,7 @@ window.addEventListener("load", () => {
         saved_count_badge,
         currentValue,
         newLength,
-        (newLength - currentValue) * 5
+        Math.min((newLength - currentValue) * 5, 1000)
       );
     },
     false

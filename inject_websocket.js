@@ -1,5 +1,6 @@
 // Lưu tất cả tin nhắn - có thể truy cập được từ console trong web facebook
 let rvdfm_all_msgs = [];
+let rvdfm_all_users = [];
 
 // Hàm dùng để xóa hết tin nhắn đã lưu - có thể dùng từ console
 const rvdfm_clear = () => {
@@ -108,6 +109,10 @@ const rvdfmSendDeletedMsgToContentJs = (msgs) => {
   window.WebSocket = function fakeConstructor(dt, config) {
     const websocket_instant = new original_WebSocket(dt, config);
 
+    // hàm hỗ trợ
+    const isMsgIdStr = (str) => str?.startsWith("mid.$");
+    const isLink = (str) => str?.startsWith("https://");
+
     // Chèn event on message => để bắt tất cả event được dùng bởi facebook trong webSocket
     websocket_instant.addEventListener("message", async function (achunk) {
       // chuyển binary code của websocket về string utf8
@@ -115,24 +120,86 @@ const rvdfmSendDeletedMsgToContentJs = (msgs) => {
 
       if (utf8_str[0] === "1" || utf8_str[0] === "2" || utf8_str[0] === "3") {
         // Xem trong dữ liệu có id của tin nhắn nào không
-        const have_msg_id = utf8_str.match(/(?=mid\.\$)(.*?)(?=\\")/);
-        if (!have_msg_id) return;
+        const have_msg_id = /(?=mid\.\$)(.*?)(?=\\")/.exec(utf8_str);
+
+        // Nếu không có id tin nhắn
+        if (!have_msg_id) {
+          const users_data = [];
+
+          const user_data_zones =
+            /(?=\(LS.sp\(\\"25\\")(.*?)(?=:LS.resolve)/gm.exec(utf8_str);
+
+          if (user_data_zones != null) {
+            user_data_zones.forEach((zone) => {
+              const user_id = /(?<=\?entity_id=)(.*?)(?=\&entity_type)/.exec(zone);
+              const avatars = /(?=https)(.*?)(?=\\",)/g.exec(zone);
+              const small_avatar = parse(avatars[0]);
+              const big_avatar = parse(avatars[1]);
+
+              const user_msg_id = /(?<=, )(.*?)(?=,\[0,1\],)/gm.exec(zone);
+
+            });
+          }
+
+          for (let i = 0; i < all_strings.length; i++) {
+            const str_i = all_strings[i];
+
+            // Thông tin người dùng
+            if (str_i === "13" && all_strings[i + 1] === "25") {
+              const small_avatar = all_strings[i + 2];
+              const large_avatar = all_strings[i + 4];
+              const user_id = /(?<=\?entity_id=).*?(?=\&entity_type)/.exec(
+                all_strings[i + 3]
+              )[0];
+              const full_user_name = all_strings[i + 6];
+              const short_user_name = all_strings[i + 8];
+              const unknown_id = all_strings[i + 9];
+
+              // Có những event bắt đầu bằng 13 ,25 nhưng không có user name => loại
+              if (full_user_name) {
+                users_data.push({
+                  user_id,
+                  small_avatar,
+                  large_avatar,
+                  full_user_name,
+                  short_user_name,
+                  unknown_id,
+                });
+              }
+            }
+          }
+
+          if (users_data.length) {
+            log.text("Users data: ", "yellow", "black");
+            console.log(users_data);
+          }
+
+          // Lưu vào rvdfm_all_users
+          rvdfm_all_users = rvdfm_all_users.concat(users_data);
+
+          return;
+        }
 
         // Lấy ra tất cả các thông tin dùng được trong dữ liệu (những chuỗi nằm giữa 2 dấu nháy kép)
         const all_strings_regex = /(\\\")(.*?)(\\\")(?=[,)])/g;
         let all_strings = utf8_str.match(all_strings_regex) || [];
         all_strings = all_strings.map((str) => parse(str));
 
-        log.text(
-          "RVDFM - VÀO LÚC " + new Date().toLocaleString(),
-          "blue",
-          "#fff9"
-        );
-        console.log("Mọi thông tin: ", { all: all_strings });
+        // Nếu all_strings có chứa thông tin thì log ra (cho dev dễ debug)
+        if (all_strings.length) {
+          // Lấy ra request id: Đây chỉ là mã định danh cho request, tăng dần đều qua từng request...
+          const request_id = /(?<=\"request_id\":)(.*?)(?=,)/.exec(utf8_str)[0];
 
-        // hàm hỗ trợ
-        const isMsgIdStr = (str) => str?.startsWith("mid.$");
-        const isLink = (str) => str?.startsWith("https://");
+          log.text(
+            "RVDFM - VÀO LÚC " + new Date().toLocaleString(),
+            "blue",
+            "#fff9"
+          );
+          console.log("Mọi thông tin: ", { request_id, all: all_strings });
+        } else {
+          // Không có thông tin gì thì thoát luôn
+          return;
+        }
 
         // Bắt đầu lấy ra những tin nhắn từ lượng thông tin trên
         let chat = [];
@@ -260,7 +327,7 @@ const rvdfmSendDeletedMsgToContentJs = (msgs) => {
 
             chat.push({
               type: "Thu hồi",
-              msg: msgs,
+              msgs: msgs,
               id: id,
             });
           }
@@ -271,28 +338,43 @@ const rvdfmSendDeletedMsgToContentJs = (msgs) => {
         // Lưu vào rvdfm_all_msgs
         const old_length = rvdfm_all_msgs.length;
         for (let c of chat) {
-          let isDuplicated = false;
-          for (let r of rvdfm_all_msgs) {
-            if (JSON.stringify(c) === JSON.stringify(r)) {
-              isDuplicated = true;
-              break;
-            }
-          }
+          let isDuplicated =
+            -1 !==
+            rvdfm_all_msgs.findIndex(
+              (_msg) => JSON.stringify(c) === JSON.stringify(_msg)
+            );
 
           if (!isDuplicated) {
             rvdfm_all_msgs = rvdfm_all_msgs.concat(chat);
 
+            // Tin nhắn thu hồi
             if (c.type === "Thu hồi") {
+              const deleted_msg_type = c.msgs
+                .map((_c) => c.type || "không rõ loại")
+                .join(",");
+
               log.text(
-                `> Tin nhắn thu hồi: (${c.msg?.type || "Không rõ loại"})`,
+                `> Tin nhắn thu hồi: (${deleted_msg_type})`,
                 "black",
                 "#f35369"
               );
               console.log(
-                c.msg || "(RVDFM: không có dữ liệu cho tin nhắn này)"
+                c.msgs || "(RVDFM: không có dữ liệu cho tin nhắn này)"
               );
 
-              rvdfmSendDeletedMsgToContentJs(c.msg);
+              rvdfmSendDeletedMsgToContentJs(c.msgs);
+            }
+
+            // Tin nhắn thả/gỡ react
+            else if (c.type == "Thả react" || c.type === "Gỡ react") {
+              const target_msg = rvdfm_all_msgs.filter(
+                (_msg) => _msg.id === c.id
+              );
+
+              log.text(`> ${c.type}:`, "black", "yellow");
+              console.log(
+                target_msg || "(RVDFM: không có dữ liệu cho tin nhắn này)"
+              );
             }
           }
         }
