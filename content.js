@@ -29,7 +29,7 @@ window.addEventListener("load", () => {
     position: "bottom-end",
     iconHtml: `<img src="${icon32}" alt="rvdfm floating modal" />`,
     html: `<p><b style="color:blue">RVDFM</b> - Xem tin nhắn bị gỡ trên Facebook <b style="color: green">ĐANG BẬT</b></p>`,
-    showConfirmButton: false,
+    showConfirmButton: true,
     timerProgressBar: true,
     timer: 5000,
   });
