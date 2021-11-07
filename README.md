@@ -29,6 +29,9 @@ Hiện tại chưa up lên store nên các bạn sẽ cần cài đặt thủ c�
 
 ## Cập nhật
 
+Lưu ý: Nếu bạn cài tool trước khi có bản cập nhật gần nhất được liệt kê dưới đây, thì bạn nên tải cài lại để có thể dùng những chức năng mới nhất và tránh lỗi nhé.
+
+- 07/11/2021: Đã fix lỗi không lưu được tin nhắn sau khi facebook cập nhật - ver 2.1
 - 02/09/2021: Giao diện đẹp hơn, gọn gàng hơn, khung kéo thả tối giản hơn.
 - 01/09/2021: [Bài viết](https://www.facebook.com/groups/j2team.community/posts/1651683238497123/) Version 2: Có giao diện ngay trong trang fb, hiển thị mọi loại tin nhắn, prevent XSS, ...
 - 31/08/2021: extension đã có giao diện popup riêng. Các bạn ấn vào icon extension là sẽ thấy các tin nhắn bị gỡ.
