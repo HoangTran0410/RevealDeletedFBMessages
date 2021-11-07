@@ -131,13 +131,14 @@ const rvdfmSendDeletedMsgToContentJs = (msgs) => {
 
           if (user_data_zones != null) {
             user_data_zones.forEach((zone) => {
-              const user_id = /(?<=\?entity_id=)(.*?)(?=\&entity_type)/.exec(zone);
+              const user_id = /(?<=\?entity_id=)(.*?)(?=\&entity_type)/.exec(
+                zone
+              );
               const avatars = /(?=https)(.*?)(?=\\",)/g.exec(zone);
               const small_avatar = parse(avatars[0]);
               const big_avatar = parse(avatars[1]);
 
               const user_msg_id = /(?<=, )(.*?)(?=,\[0,1\],)/gm.exec(zone);
-
             });
           }
 
@@ -195,7 +196,11 @@ const rvdfmSendDeletedMsgToContentJs = (msgs) => {
             "blue",
             "#fff9"
           );
-          console.log("Mọi thông tin: ", { request_id, all: all_strings });
+          console.log("Mọi thông tin: ", {
+            request_id,
+            all: all_strings,
+            utf8_str,
+          });
         } else {
           // Không có thông tin gì thì thoát luôn
           return;
@@ -207,10 +212,7 @@ const rvdfmSendDeletedMsgToContentJs = (msgs) => {
           const str_i = all_strings[i];
 
           // Tin nhắn chữ
-          if (
-            (str_i === "124" || str_i === "123") &&
-            isMsgIdStr(all_strings[i + 2])
-          ) {
+          if (str_i === "insertMessage" && isMsgIdStr(all_strings[i + 2])) {
             const content = all_strings[i + 1];
             if (content) {
               chat.push({
@@ -222,7 +224,7 @@ const rvdfmSendDeletedMsgToContentJs = (msgs) => {
           }
 
           // Tin nhắn đính kèm: image / gif / video / âm thanh / file
-          if (str_i === "591" && isLink(all_strings[i + 2])) {
+          if (str_i === "insertBlobAttachment" && isLink(all_strings[i + 2])) {
             const isImg = all_strings[i + 1]?.startsWith("image-");
             const isGif = all_strings[i + 1]?.startsWith("gif-");
             const isVideo = all_strings[i + 1]?.startsWith("video-");
@@ -251,16 +253,20 @@ const rvdfmSendDeletedMsgToContentJs = (msgs) => {
           }
 
           // Tin nhắn nhãn dán
-          if (str_i === "144" && isMsgIdStr(all_strings[i + 1])) {
+          if (
+            str_i === "insertMessage" &&
+            isMsgIdStr(all_strings[i + 1]) &&
+            isLink(all_strings[i + 6])
+          ) {
             chat.push({
               type: "Nhãn dán",
-              content: all_strings[i + 3],
+              content: all_strings[i + 6],
               id: all_strings[i + 1],
             });
           }
 
           // Thả react
-          if (str_i === "110" && isMsgIdStr(all_strings[i + 1])) {
+          if (str_i === "upsertReaction" && isMsgIdStr(all_strings[i + 1])) {
             chat.push({
               type: "Thả react",
               content: all_strings[i + 2],
@@ -269,7 +275,7 @@ const rvdfmSendDeletedMsgToContentJs = (msgs) => {
           }
 
           // Gỡ react
-          if (str_i === "111" && isMsgIdStr(all_strings[i + 1])) {
+          if (str_i === "deleteReaction" && isMsgIdStr(all_strings[i + 1])) {
             const id = all_strings[i + 1];
             const content =
               rvdfm_all_msgs.find((c) => c.id === id)?.content || "";
@@ -281,18 +287,18 @@ const rvdfmSendDeletedMsgToContentJs = (msgs) => {
             });
           }
 
-          // Tin nhắn chia sẻ: link / vị trí / vị trí trực tiếp
+          // Tin nhắn chia sẻ vị trí / vị trí trực tiếp
           if (
-            str_i === "414" &&
-            isMsgIdStr(all_strings[i + 2]) &&
-            isLink(all_strings[i + 5])
+            str_i === "xma_live_location_sharing" &&
+            isMsgIdStr(all_strings[i - 2]) &&
+            isLink(all_strings[i + 1])
           ) {
-            const link = all_strings[i + 5];
+            const link = all_strings[i + 1];
 
             chat.push({
               type: "Chia sẻ",
               content: link,
-              id: all_strings[i + 2],
+              id: all_strings[i - 2],
             });
           }
 
@@ -318,8 +324,11 @@ const rvdfmSendDeletedMsgToContentJs = (msgs) => {
           // }
 
           // Thu hồi tin nhắn
-          if (str_i === "594" && isMsgIdStr(all_strings[i + 1])) {
-            const id = all_strings[i + 1];
+          if (
+            str_i === "deleteThenInsertMessage" &&
+            isMsgIdStr(all_strings[i + 2])
+          ) {
+            const id = all_strings[i + 2];
             const msgs =
               rvdfm_all_msgs.filter(
                 (c) => c.id === id && c.type !== "Thu hồi"
