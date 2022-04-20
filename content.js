@@ -13,11 +13,29 @@ doc.appendChild(inject_ws_script);
 
 // ========================== Utils ==========================
 // Inject extension id: https://stackoverflow.com/a/34414568
-var extIdScript = document.createElement("script");
-extIdScript.textContent =
-  "const rvdfmExtensionId = " + JSON.stringify(chrome.runtime.id);
-doc.appendChild(extIdScript);
-extIdScript.parentNode.removeChild(extIdScript);
+// var extIdScript = document.createElement("script");
+// extIdScript.textContent =
+//   "const rvdfmExtensionId = " + JSON.stringify(chrome.runtime.id);
+// doc.appendChild(extIdScript);
+// extIdScript.parentNode.removeChild(extIdScript);
+
+chrome.runtime.onMessage.addListener(
+  // this is the message listener
+  function (request, sender, sendResponse) {
+    console.log(request, sender, sendResponse);
+
+    let { message, value } = request;
+    if (message == "toggle") {
+      let modal = document.querySelector("#rvdfm-floating-modal");
+      if (modal) {
+        modal.style.top = "100px";
+        modal.style.left = "100px";
+
+        modal.style.display = value ? "block" : "none";
+      }
+    }
+  }
+);
 
 window.addEventListener("load", () => {
   // https://dev.to/paulasantamaria/chrome-extensions-making-changes-to-a-web-page-1n5f

@@ -5,18 +5,24 @@
     <meta charset="utf-8">
     <title>Reveal Deleted FB Message</title>
 
-    <script src="lib/jquery.min.js"></script>
-    <script src="lib/jquery.dataTable.min.js"></script>
-
-    <link rel="stylesheet" href="lib/jquery.dataTable.min.css">
     <link rel="stylesheet" href="style.css">
+    <script src="popup.js"></script>
 </head>
 
 <body>
     <h2>RVDFM<br />Đọc tin nhắn bị xóa trên FB</h2>
 
-    <h3 style="color: red">Hiện tại chưa làm xong chức năng xem trên đây.
-        <br /> Bạn vui lòng <span style="color: blue"> ấn F12 </span> để xem đỡ trong console nhé.</h3>
+    <div class="container">
+        <label class="switch">
+            <input type="checkbox" id="togBtn">
+            <div class="slider round">
+                <!--ADDED HTML -->
+                <span class="on">ON</span>
+                <span class="off">OFF</span>
+                <!--END-->
+            </div>
+        </label>
+    </div>
 
     <!-- <table id="example" class="hover order-column" width="100%"></table> -->
 
@@ -24,6 +30,7 @@
     <p class="author">
         Made with ❤️ by <a href="https://www.facebook.com/99.hoangtran/" target="_blank">Hoang Tran</a>
     </p>
+
 </body>
 
 </html>

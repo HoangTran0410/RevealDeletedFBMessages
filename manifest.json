@@ -15,23 +15,13 @@
   },
   "externally_connectable": {
     "matches": [
-      "*://*.facebook.com/*",
-      "*://*.messenger.com/*",
-      "*://*.instagram.com/*"
+      "*://*.facebook.com/*"
     ]
   },
-  "permissions": [
-    "storage",
-    "unlimitedStorage",
-    "background"
-  ],
+  "permissions": [],
   "host_permissions": [
-    "*://*.facebook.com/*",
-    "*://*.messenger.com/*"
+    "*://*.facebook.com/*"
   ],
-  "background": {
-    "service_worker": "background.js"
-  },
   "content_scripts": [
     {
       "js": [
@@ -41,8 +31,7 @@
         "./content.css"
       ],
       "matches": [
-        "*://*.facebook.com/*",
-        "*://*.messenger.com/*"
+        "*://*.facebook.com/*"
       ],
       "run_at": "document_start"
     },
@@ -51,8 +40,7 @@
         "./libs/swal2.js"
       ],
       "matches": [
-        "*://*.facebook.com/*",
-        "*://*.messenger.com/*"
+        "*://*.facebook.com/*"
       ],
       "run_at": "document_idle"
     }
