@@ -24,7 +24,11 @@ a {
 .container {
     display: flex;
     justify-content: center;
-    align-items: center;
+    text-align: center;
+}
+
+.warning {
+    color: #ca7e22;
 }
 
 

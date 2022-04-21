@@ -22,8 +22,6 @@ doc.appendChild(inject_ws_script);
 chrome.runtime.onMessage.addListener(
   // this is the message listener
   function (request, sender, sendResponse) {
-    console.log(request, sender, sendResponse);
-
     let { message, value } = request;
     if (message == "toggle") {
       let modal = document.querySelector("#rvdfm-floating-modal");
@@ -32,7 +30,12 @@ chrome.runtime.onMessage.addListener(
         modal.style.left = "100px";
 
         modal.style.display = value ? "block" : "none";
+        localStorage.setItem("rvdfb-toggle", value);
       }
+    } else if (message == "syncToggle") {
+      sendResponse({
+        value: localStorage.getItem("rvdfb-toggle"),
+      });
     }
   }
 );
@@ -117,6 +120,11 @@ window.addEventListener("load", () => {
     floating_modal.style.top = saved_position[0];
     floating_modal.style.left = saved_position[1];
   }
+
+  // show/hide modal
+  floating_modal.style.display = localStorage.getItem("rvdfb-toggle")
+    ? "block"
+    : "none";
 
   // Button Events
   saved_what_btn.onclick = () => {
