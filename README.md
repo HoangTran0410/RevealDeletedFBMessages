@@ -1,5 +1,10 @@
 # Reveal Deleted FB Messages
 
+## [MỚI] Cài đặt ngay từ [Chrome Webstore](https://chrome.google.com/webstore/detail/reveal-deleted-fb-message/oddpcajnaolfbinffajkacjhohhahlib/related?hl=vi&authuser=1)
+
+![normal](./screenshots/webstore.jpg)
+
+
 Một extension nho nhỏ, giúp mọi người xem lại những tin nhắn đã bị đối phương xóa trong fb messenger.
 
 - [Post hướng dẫn tạo Extension này](https://www.facebook.com/groups/j2team.community/posts/1650103925321721/)
