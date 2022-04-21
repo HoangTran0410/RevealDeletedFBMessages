@@ -43,6 +43,12 @@ const rvdfmSendDeletedMsgToContentJs = (msgs) => {
   // Gửi event để hiển thị trên floating modal UI
   window.addEventListener("load", () => {
     rvdfmSendSavedCounterToContentJs(0, rvdfm_all_msgs.length);
+    rvdfmSendDeletedMsgToContentJs(
+      rvdfm_all_msgs
+        .filter((_) => _.type == "Thu hồi")
+        .map((_) => _.msgs)
+        .flat()
+    );
   });
 
   // Lưu lại vào localStorage mỗi khi tắt tab
@@ -341,6 +347,9 @@ const rvdfmSendDeletedMsgToContentJs = (msgs) => {
             });
           }
         }
+
+        // Chèn thời gian hiện tại vào
+        chat = chat.map((_) => ({ ..._, time: Date.now() }));
 
         console.log("Thông tin lọc được:", chat);
 

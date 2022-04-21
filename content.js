@@ -93,6 +93,9 @@ window.addEventListener("load", () => {
   const saved_count_span = document.querySelector("#rvdfm-saved-count");
   const saved_count_badge = document.querySelector("#rvdfm-saved-count-badge");
   const deleted_count_span = document.querySelector("#rvdfm-deleted-count");
+  const floating_modal_header = document.querySelector(
+    "#rvdfm-floating-modal-header"
+  );
   const deleted_count_badge = document.querySelector(
     "#rvdfm-deleted-count-badge"
   );
@@ -190,8 +193,6 @@ window.addEventListener("load", () => {
     false
   );
 
-  const getNow = () => new Date().toLocaleTimeString();
-
   // Show saved counter
   window.addEventListener(
     "rvdfmSavedCounter",
@@ -224,7 +225,9 @@ window.addEventListener("load", () => {
       deleted_count = newValue;
 
       for (let msg of msgs) {
-        let str = `<p>Tin nhắn thu hồi lúc (${getNow()}): </p>
+        let str = `<p>Tin nhắn thu hồi lúc (${new Date(
+          msg.time
+        ).toLocaleTimeString()}): </p>
         <span>(${msg?.type?.toLowerCase() || "không rõ"})</span>: `;
 
         switch (msg.type) {
@@ -291,9 +294,9 @@ function dragElement(elmnt) {
     pos2 = 0,
     pos3 = 0,
     pos4 = 0;
-  if (document.getElementById(elmnt.id + "header")) {
+  if (document.getElementById(elmnt.id + "-header")) {
     // if present, the header is where you move the DIV from:
-    document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+    document.getElementById(elmnt.id + "-header").onmousedown = dragMouseDown;
   } else {
     // otherwise, move the DIV from anywhere inside the DIV:
     elmnt.onmousedown = dragMouseDown;
