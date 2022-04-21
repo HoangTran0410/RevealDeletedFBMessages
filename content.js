@@ -30,11 +30,11 @@ chrome.runtime.onMessage.addListener(
         modal.style.left = "100px";
 
         modal.style.display = value ? "block" : "none";
-        localStorage.setItem("rvdfb-toggle", value);
+        localStorage.setItem("rvdfm-toggle", value);
       }
     } else if (message == "syncToggle") {
       sendResponse({
-        value: localStorage.getItem("rvdfb-toggle"),
+        value: localStorage.getItem("rvdfm-toggle"),
       });
     }
   }
@@ -125,9 +125,8 @@ window.addEventListener("load", () => {
   }
 
   // show/hide modal
-  floating_modal.style.display = localStorage.getItem("rvdfb-toggle")
-    ? "block"
-    : "none";
+  floating_modal.style.display =
+    localStorage.getItem("rvdfm-toggle") == "true" ? "block" : "none";
 
   // Button Events
   saved_what_btn.onclick = () => {
