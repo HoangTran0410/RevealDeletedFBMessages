@@ -16,9 +16,8 @@ Một extension nho nhỏ, giúp mọi người xem lại những tin nhắn đ�
 
 ## Cài đặt
 
-**Cập nhật**: 
-
-Extension đã có trên webstore, vào link và cài trực : [Chrome WebStore](https://chrome.google.com/webstore/detail/reveal-deleted-fb-message/oddpcajnaolfbinffajkacjhohhahlib/related?hl=vi&authuser=1)
+**Cập nhật**:
+Extension đã có trên webstore, vào link và cài trực tiếp nhé: [Chrome WebStore](https://chrome.google.com/webstore/detail/reveal-deleted-fb-message/oddpcajnaolfbinffajkacjhohhahlib/related?hl=vi&authuser=1)
 
 
 Hiện tại chưa up lên store nên các bạn sẽ cần cài đặt thủ công
