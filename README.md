@@ -1,5 +1,7 @@
 # Reveal Deleted FB Messages
 
+Donate? Muốn hỗ trợ mình 1 ly cafe <3 [Donate here](https://github.com/HoangTran0410/HoangTran0410/blob/main/DONATE.md)
+
 ## [MỚI] Cài đặt ngay từ [Chrome Webstore](https://chrome.google.com/webstore/detail/reveal-deleted-fb-message/oddpcajnaolfbinffajkacjhohhahlib/related?hl=vi&authuser=1)
 
 ![normal](./screenshots/webstore.jpg)
