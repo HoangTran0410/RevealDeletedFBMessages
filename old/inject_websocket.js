@@ -2,6 +2,7 @@
 let rvdfm_all_msgs = [];
 let rvdfm_all_users = [];
 
+// #region - Communications
 // Hàm dùng để xóa hết tin nhắn đã lưu - có thể dùng từ console
 const rvdfm_clear = () => {
   const count = rvdfm_all_msgs.length;
@@ -31,6 +32,7 @@ const rvdfmSendDeletedMsgToContentJs = (msgs) => {
   });
   window.dispatchEvent(event);
 };
+// #endregion
 
 (function () {
   console.log("Extension RVDFM - Xem Tin Nhắn Bị Gỡ Trên FB đã BẬT");

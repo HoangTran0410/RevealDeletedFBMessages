@@ -1,61 +1,28 @@
 {
+  "manifest_version": 3,
   "name": "Reveal Deleted FB Messages",
   "description": "Xem lại tin nhắn đã gỡ trên fb",
-  "version": "0.0.2",
-  "manifest_version": 3,
+  "version": "0.0.3",
+  "icons": {
+    "16": "icons/icon16.png",
+    "24": "icons/icon24.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png"
+  },
   "action": {
     "default_title": "Reveal Deleted FB Message",
     "default_popup": "popup/popup.html",
-    "default_icon": {
-      "16": "icons/icon16.png",
-      "24": "icons/icon24.png",
-      "32": "icons/icon32.png",
-      "48": "icons/icon48.png"
-    }
+    "default_icon": "icons/icon32.png"
   },
-  "externally_connectable": {
-    "matches": [
-      "*://*.facebook.com/*"
-    ]
+  "permissions": ["unlimitedStorage"],
+  "background": {
+    "service_worker": "background.js"
   },
-  "permissions": [],
-  "host_permissions": [
-    "*://*.facebook.com/*"
-  ],
   "content_scripts": [
     {
-      "js": [
-        "./content.js"
-      ],
-      "css": [
-        "./content.css"
-      ],
-      "matches": [
-        "*://*.facebook.com/*"
-      ],
+      "js": ["./content.js"],
+      "matches": ["*://*.facebook.com/*", "*://*.messenger.com/*"],
       "run_at": "document_start"
-    },
-    {
-      "js": [
-        "./libs/swal2.js"
-      ],
-      "matches": [
-        "*://*.facebook.com/*"
-      ],
-      "run_at": "document_idle"
-    }
-  ],
-  "web_accessible_resources": [
-    {
-      "resources": [
-        "inject_websocket.js",
-        "libs/swal2.js",
-        "icons/icon16.png",
-        "icons/icon32.png"
-      ],
-      "matches": [
-        "<all_urls>"
-      ]
     }
   ]
 }
