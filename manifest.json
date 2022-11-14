@@ -14,15 +14,30 @@
     "default_popup": "popup/popup.html",
     "default_icon": "icons/icon32.png"
   },
-  "permissions": ["unlimitedStorage"],
-  "background": {
-    "service_worker": "background.js"
-  },
+  "permissions": [
+    "unlimitedStorage"
+  ],
   "content_scripts": [
     {
-      "js": ["./content.js"],
-      "matches": ["*://*.facebook.com/*", "*://*.messenger.com/*"],
+      "js": [
+        "./content.js"
+      ],
+      "matches": [
+        "*://*.facebook.com/*",
+        "*://*.messenger.com/*"
+      ],
       "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "inject.js"
+      ],
+      "matches": [
+        "*://*.facebook.com/*",
+        "*://*.messenger.com/*"
+      ]
     }
   ]
 }
