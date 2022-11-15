@@ -26,9 +26,12 @@
     const isMsgIdStr = (str) => str?.startsWith("mid.$");
     const isLink = (str) => str?.startsWith("https://");
 
-    websocket_instant.addEventListener("message", async function (achunk) {
-      const utf8_str = new TextDecoder("utf-8").decode(achunk.data);
-    //   console.log(utf8_str);
+    websocket_instant.addEventListener("message", async function (chunk) {
+      if (chunk.origin === "wss://edge-chat.facebook.com") {
+        console.log(chunk);
+        const utf8_str = new TextDecoder("utf-8").decode(chunk.data);
+      }
+      //   console.log(utf8_str);
 
       //   if (utf8_str[0] === "1" || utf8_str[0] === "2" || utf8_str[0] === "3") {
       //     const have_msg_id = /(?=mid\.\$)(.*?)(?=\\")/.exec(utf8_str);
