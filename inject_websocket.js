@@ -193,7 +193,11 @@
             let chats = findMessageData(payload);
             saveChatData(chats);
 
-            console.log(window.ufs_rvdfm_all_msgs);
+            console.log(
+              "RVDFM - Tất cả tin nhắn lưu được: " +
+                Object.keys(window.ufs_rvdfm_all_msgs)?.length,
+              window.ufs_rvdfm_all_msgs
+            );
           }
         }
       } catch (e) {
@@ -223,15 +227,10 @@ window.onload = () => {
         } = a.message;
 
         if (isUnsent) {
-          threadKey =
-            UsefulScriptGlobalPageContext.Facebook.decodeArrId(threadKey);
-          senderId =
-            UsefulScriptGlobalPageContext.Facebook.decodeArrId(senderId);
-
           let savedMsg = window.ufs_rvdfm_all_msgs[messageId];
 
           a.message.isUnsent = false;
-          a.message.displayedContentTypes = [0, 2]; // text
+          a.message.displayedContentTypes = [0, 1]; // text
           if (savedMsg) {
             let title = `[Tin thu hồi - ${savedMsg.type}]:\n`;
             let text = `${savedMsg?.data}`;
