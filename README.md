@@ -39,6 +39,7 @@ Hoặc các bạn có thể cài đặt thủ công
 
 Lưu ý: Nếu bạn cài tool trước khi có bản cập nhật gần nhất được liệt kê dưới đây, thì bạn nên tải cài lại để có thể dùng những chức năng mới nhất và tránh lỗi nhé.
 
+- **15/07/2023**: Fix lỗi "Error when display this message"
 - **12/07/2023**: Hiển thị nội dung tin nhắn ngay tại vị trí tin thu hồi => Không hiển thị trong giao diện riêng nữa => sẽ giúp bạn biết chính xác ai thu hồi, thời điểm nào, trong đoạn chat nào.
 
 - **07/11/2021**: Đã fix lỗi không lưu được tin nhắn sau khi facebook cập nhật - ver 2.1

@@ -1,7 +1,7 @@
 {
   "name": "Reveal Deleted FB Messages",
   "description": "Xem lại tin nhắn đã gỡ trên fb",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "manifest_version": 3,
   "action": {
     "default_title": "Reveal Deleted FB Message",
